@@ -1,0 +1,542 @@
+---
+title: JavaScript 完全指南
+tags:
+  - JavaScript
+  - 前端
+  - 教程
+logo: https://api.dicebear.com/7.x/shapes/svg?seed=javascript
+---
+
+这是一篇全面的 JavaScript 学习指南，涵盖从基础到高级的所有知识点。
+
+## 基础语法
+
+JavaScript 是一门动态类型的脚本语言。
+
+### 变量声明
+
+```javascript [variables.js]
+// var - 函数作用域
+var name = 'Alice'
+
+// let - 块级作用域
+let age = 25
+
+// const - 常量
+const PI = 3.14159
+```
+
+### 数据类型
+
+JavaScript 有 7 种原始类型和 1 种引用类型。
+
+#### 原始类型
+
+- `string` - 字符串
+- `number` - 数字
+- `boolean` - 布尔值
+- `null` - 空值
+- `undefined` - 未定义
+- `symbol` - 符号
+- `bigint` - 大整数
+
+#### 引用类型
+
+对象、数组、函数都是引用类型。
+
+### 运算符
+
+#### 算术运算符
+
+```javascript
+let a = 10 + 5  // 15
+let b = 10 - 5  // 5
+let c = 10 * 5  // 50
+let d = 10 / 5  // 2
+let e = 10 % 3  // 1
+```
+
+#### 比较运算符
+
+```javascript
+console.log(5 == '5')   // true (类型转换)
+console.log(5 === '5')  // false (严格相等)
+console.log(5 != '5')   // false
+console.log(5 !== '5')  // true
+```
+
+#### 逻辑运算符
+
+```javascript
+console.log(true && false)  // false
+console.log(true || false)  // true
+console.log(!true)          // false
+```
+
+## 流程控制
+
+### 条件语句
+
+#### if...else
+
+```javascript [condition.js]
+if (score >= 90) {
+  console.log('优秀')
+} else if (score >= 60) {
+  console.log('及格')
+} else {
+  console.log('不及格')
+}
+```
+
+#### switch
+
+```javascript
+switch (day) {
+  case 1:
+    console.log('周一')
+    break
+  case 2:
+    console.log('周二')
+    break
+  default:
+    console.log('其他')
+}
+```
+
+### 循环语句
+
+#### for 循环
+
+```javascript
+for (let i = 0; i < 5; i++) {
+  console.log(i)
+}
+```
+
+#### while 循环
+
+```javascript
+let i = 0
+while (i < 5) {
+  console.log(i)
+  i++
+}
+```
+
+#### for...of 循环
+
+```javascript
+const arr = [1, 2, 3]
+for (const item of arr) {
+  console.log(item)
+}
+```
+
+#### for...in 循环
+
+```javascript
+const obj = { a: 1, b: 2 }
+for (const key in obj) {
+  console.log(key, obj[key])
+}
+```
+
+## 函数
+
+### 函数声明
+
+```javascript [functions.js]
+// 函数声明
+function add(a, b) {
+  return a + b
+}
+
+// 函数表达式
+const subtract = function(a, b) {
+  return a - b
+}
+
+// 箭头函数
+const multiply = (a, b) => a * b
+```
+
+### 参数处理
+
+#### 默认参数
+
+```javascript
+function greet(name = 'World') {
+  return `Hello, ${name}!`
+}
+```
+
+#### 剩余参数
+
+```javascript
+function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0)
+}
+```
+
+#### 解构参数
+
+```javascript
+function printUser({ name, age }) {
+  console.log(`${name} is ${age} years old`)
+}
+```
+
+### 闭包
+
+```javascript [closure.js]
+function createCounter() {
+  let count = 0
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    getCount: () => count
+  }
+}
+
+const counter = createCounter()
+console.log(counter.increment()) // 1
+console.log(counter.increment()) // 2
+```
+
+### 高阶函数
+
+```javascript
+// 函数作为参数
+const numbers = [1, 2, 3, 4, 5]
+const doubled = numbers.map(n => n * 2)
+
+// 函数作为返回值
+function multiplier(factor) {
+  return (number) => number * factor
+}
+```
+
+## 对象与类
+
+### 对象字面量
+
+```javascript [objects.js]
+const person = {
+  name: 'Alice',
+  age: 25,
+  greet() {
+    return `Hi, I'm ${this.name}`
+  }
+}
+```
+
+### 对象方法
+
+#### Object.keys / values / entries
+
+```javascript
+const obj = { a: 1, b: 2, c: 3 }
+
+Object.keys(obj)    // ['a', 'b', 'c']
+Object.values(obj)  // [1, 2, 3]
+Object.entries(obj) // [['a', 1], ['b', 2], ['c', 3]]
+```
+
+#### Object.assign
+
+```javascript
+const target = { a: 1 }
+const source = { b: 2 }
+Object.assign(target, source) // { a: 1, b: 2 }
+```
+
+### 类
+
+```javascript [class.js]
+class Animal {
+  constructor(name) {
+    this.name = name
+  }
+  
+  speak() {
+    console.log(`${this.name} makes a sound`)
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log(`${this.name} barks`)
+  }
+}
+```
+
+### 原型链
+
+```javascript
+function Person(name) {
+  this.name = name
+}
+
+Person.prototype.greet = function() {
+  return `Hello, ${this.name}`
+}
+```
+
+## 数组方法
+
+### 遍历方法
+
+```javascript [array-methods.js]
+const arr = [1, 2, 3, 4, 5]
+
+// forEach
+arr.forEach(item => console.log(item))
+
+// map
+const doubled = arr.map(x => x * 2)
+
+// filter
+const evens = arr.filter(x => x % 2 === 0)
+
+// reduce
+const sum = arr.reduce((acc, cur) => acc + cur, 0)
+```
+
+### 查找方法
+
+```javascript
+const users = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' }
+]
+
+// find
+const user = users.find(u => u.id === 1)
+
+// findIndex
+const index = users.findIndex(u => u.id === 1)
+
+// includes
+const hasAlice = users.some(u => u.name === 'Alice')
+```
+
+### 排序方法
+
+```javascript
+const numbers = [3, 1, 4, 1, 5, 9]
+
+// 升序
+numbers.sort((a, b) => a - b)
+
+// 降序
+numbers.sort((a, b) => b - a)
+```
+
+### 其他方法
+
+```javascript
+// slice - 截取
+const arr = [1, 2, 3, 4, 5]
+arr.slice(1, 3) // [2, 3]
+
+// splice - 删除/插入
+arr.splice(1, 2, 'a', 'b')
+
+// concat - 合并
+[1, 2].concat([3, 4]) // [1, 2, 3, 4]
+
+// flat - 扁平化
+[[1, 2], [3, 4]].flat() // [1, 2, 3, 4]
+```
+
+## 异步编程
+
+### 回调函数
+
+```javascript [async.js]
+function fetchData(callback) {
+  setTimeout(() => {
+    callback('Data loaded')
+  }, 1000)
+}
+```
+
+### Promise
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Success')
+  }, 1000)
+})
+
+promise
+  .then(result => console.log(result))
+  .catch(error => console.error(error))
+```
+
+### async/await
+
+```javascript
+async function fetchUser() {
+  try {
+    const response = await fetch('/api/user')
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error(error)
+  }
+}
+```
+
+### Promise 方法
+
+```javascript
+// Promise.all - 全部完成
+Promise.all([p1, p2, p3])
+
+// Promise.race - 竞速
+Promise.race([p1, p2, p3])
+
+// Promise.allSettled - 全部结束
+Promise.allSettled([p1, p2, p3])
+```
+
+## 模块系统
+
+### ES Modules
+
+```javascript [modules.js]
+// 导出
+export const name = 'Alice'
+export function greet() {}
+export default class User {}
+
+// 导入
+import User, { name, greet } from './user.js'
+```
+
+### 动态导入
+
+```javascript
+const module = await import('./module.js')
+```
+
+## DOM 操作
+
+### 选择元素
+
+```javascript [dom.js]
+// 单个元素
+document.getElementById('app')
+document.querySelector('.container')
+
+// 多个元素
+document.getElementsByClassName('item')
+document.querySelectorAll('.item')
+```
+
+### 修改元素
+
+```javascript
+const el = document.querySelector('#app')
+
+// 内容
+el.textContent = 'Hello'
+el.innerHTML = '<span>Hello</span>'
+
+// 属性
+el.setAttribute('data-id', '123')
+el.getAttribute('data-id')
+
+// 样式
+el.style.color = 'red'
+el.classList.add('active')
+```
+
+### 事件处理
+
+```javascript
+const button = document.querySelector('button')
+
+button.addEventListener('click', (event) => {
+  console.log('Clicked!', event.target)
+})
+```
+
+## 错误处理
+
+### try...catch
+
+```javascript [error.js]
+try {
+  throw new Error('Something went wrong')
+} catch (error) {
+  console.error(error.message)
+} finally {
+  console.log('Cleanup')
+}
+```
+
+### 自定义错误
+
+```javascript
+class ValidationError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'ValidationError'
+  }
+}
+```
+
+## 正则表达式
+
+### 基本用法
+
+```javascript [regex.js]
+const pattern = /hello/i
+const text = 'Hello World'
+
+pattern.test(text)  // true
+text.match(pattern) // ['Hello']
+```
+
+### 常用模式
+
+```javascript
+// 邮箱
+/^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/
+
+// 手机号
+/^1[3-9]\d{9}$/
+
+// URL
+/^https?:\/\/[\w\-]+(\.[\w\-]+)+/
+```
+
+## 存储
+
+### localStorage
+
+```javascript [storage.js]
+// 存储
+localStorage.setItem('user', JSON.stringify({ name: 'Alice' }))
+
+// 读取
+const user = JSON.parse(localStorage.getItem('user'))
+
+// 删除
+localStorage.removeItem('user')
+```
+
+### sessionStorage
+
+```javascript
+sessionStorage.setItem('token', 'abc123')
+sessionStorage.getItem('token')
+```
+
+## 总结
+
+以上涵盖了 JavaScript 的核心知识点，掌握这些内容可以应对大部分开发场景。

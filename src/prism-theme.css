@@ -1,0 +1,245 @@
+/* 代码块容器 */
+.code-block-wrapper {
+  position: relative;
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+/* 代码块头部 */
+.code-header {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 40px;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.code-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  position: relative;
+}
+
+/* 只有当有标题时才显示竖线 */
+.code-dots.has-title {
+  padding-right: 16px;
+}
+
+.code-dots.has-title::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #e5e7eb;
+}
+
+.code-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.code-dots .dot.red {
+  background: #ff5f56;
+}
+
+.code-dots .dot.yellow {
+  background: #ffbd2e;
+}
+
+.code-dots .dot.green {
+  background: #27c93f;
+}
+
+.code-title {
+  margin-left: 16px;
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 600;
+  user-select: none;
+}
+
+.code-lang {
+  margin-left: auto;
+  font-size: 12px;
+  color: #9ca3af;
+  user-select: none;
+}
+
+/* 代码内容区域 */
+.code-content {
+  position: relative;
+}
+
+.code-copy {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 6px;
+  opacity: 0;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.code-block-wrapper:hover .code-copy {
+  opacity: 1;
+}
+
+.code-copy:hover {
+  color: #374151;
+  background: #fff;
+  border-color: #d1d5db;
+}
+
+.code-copy.copied {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  opacity: 1;
+}
+
+/* Shiki 代码块样式 */
+.code-block {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  background: #fff !important;
+}
+
+/* 浅色/深色代码块切换 */
+.code-light {
+  display: block;
+}
+
+.code-dark {
+  display: none;
+}
+
+.app.dark .code-light {
+  display: none;
+}
+
+.app.dark .code-dark {
+  display: block;
+}
+
+.code-block pre,
+.code-block pre.shiki,
+.code-block .shiki,
+.code-block pre[style],
+.code-block .shiki[style] {
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  overflow-x: auto;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.code-block .shiki code {
+  display: block;
+}
+
+.code-block code {
+  font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: 0;
+  background: transparent !important;
+}
+
+.code-block pre {
+  font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.code-block code span {
+  background: transparent !important;
+}
+
+/* 深色主题代码块 */
+.app.dark .code-block-wrapper {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+.app.dark .code-header {
+  background: #252526;
+  border-bottom-color: #333;
+}
+
+.app.dark .code-dots.has-title::after {
+  background: #444;
+}
+
+.app.dark .code-title {
+  color: #f3f4f6;
+}
+
+.app.dark .code-lang {
+  color: #6b7280;
+}
+
+.app.dark .code-copy {
+  background: rgba(30, 30, 30, 0.9);
+  border-color: #444;
+  color: #9ca3af;
+}
+
+.app.dark .code-copy:hover {
+  color: #fff;
+  background: #333;
+  border-color: #555;
+}
+
+.app.dark .code-copy.copied {
+  color: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+}
+
+.app.dark .code-block {
+  background: #1e1e1e !important;
+}
+
+.app.dark .code-block pre,
+.app.dark .code-block pre.shiki,
+.app.dark .code-block .shiki,
+.app.dark .code-block pre[style],
+.app.dark .code-block .shiki[style] {
+  background: #1e1e1e !important;
+  background-color: #1e1e1e !important;
+}
+
+/* 行内代码 */
+.inline-code {
+  background: rgba(142, 150, 170, 0.14);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  color: #476582;
+}
+
+/* 暗色主题行内代码 */
+.app.dark .inline-code {
+  background: rgba(101, 117, 133, 0.32);
+  color: #c9def1;
+}

@@ -1,0 +1,284 @@
+---
+title: Markdown 语法完全指南
+tags:
+  - Markdown
+  - 教程
+  - 示例
+logo: /assets/markdown.png
+pinned: true
+---
+
+这篇文章展示了博客支持的所有 Markdown 语法，可以作为写作参考。
+
+## Frontmatter
+
+每篇文章开头需要使用 YAML 格式的 frontmatter 来定义元数据：
+
+```yaml [文章配置示例]
+---
+title: 文章标题
+description: 文章摘要描述
+tags:
+  - 标签1
+  - 标签2
+logo: https://example.com/logo.png
+pinned: true
+---
+```
+
+支持的字段：
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| title | string | 否 | 文章标题，默认取一级标题 |
+| description | string | 否 | 文章摘要，默认取一级标题下的内容 |
+| tags | string[] | 否 | 标签列表 |
+| logo | string | 否 | 文章图标 URL |
+| pinned | boolean | 否 | 是否置顶，默认 false |
+
+## 标题
+
+标题使用 `#` 符号，支持 1-6 级标题：
+
+```markdown
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+```
+
+## 文本样式
+
+**粗体文本** 使用 `**文本**` 或 `__文本__`
+
+*斜体文本* 使用 `*文本*` 或 `_文本_`
+
+***粗斜体*** 使用 `***文本***`
+
+~~删除线~~ 使用 `~~文本~~`
+
+这是一段普通文本，用于展示博客的排版效果。好的排版能让读者更专注于内容本身。段落之间保持适当的间距，行高设置合理，让阅读更加舒适。
+
+## 链接和图片
+
+### 链接
+
+[访问 GitHub](https://github.com) - 行内链接
+
+[带标题的链接](https://github.com "GitHub 官网")
+
+自动链接：https://example.com
+
+### 图片
+
+![Vite Logo](https://vitejs.dev/logo.svg)
+
+## 列表
+
+### 无序列表
+
+- 第一项
+- 第二项
+  - 嵌套项 A
+  - 嵌套项 B
+- 第三项
+
+### 有序列表
+
+1. 第一步
+2. 第二步
+   1. 子步骤 2.1
+   2. 子步骤 2.2
+3. 第三步
+
+### 任务列表
+
+- [x] 已完成的任务
+- [x] 另一个完成的任务
+- [ ] 待完成的任务
+- [ ] 还没做的事情
+
+## 引用
+
+> 这是一段引用文本。引用可以用来强调重要内容或引用他人的话。
+>
+> 引用可以包含多个段落。
+
+> 嵌套引用
+>> 这是嵌套的引用
+>>> 三层嵌套
+
+## 代码
+
+### 行内代码
+
+使用 `const` 声明常量，使用 `let` 声明变量。调用 `console.log()` 输出日志。
+
+在终端运行 `npm install` 安装依赖。
+
+### 代码块
+
+代码块支持自定义标题，使用格式：` ```语言 [标题] `
+
+```javascript [greeting.js]
+const greeting = (name) => {
+  return `Hello, ${name}!`
+}
+
+console.log(greeting('World'))
+```
+
+```typescript [types/user.ts]
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+function getUser(id: number): User {
+  return {
+    id,
+    name: 'Alice',
+    email: 'alice@example.com'
+  }
+}
+```
+
+```python [fibonacci.py]
+def fibonacci(n: int) -> list[int]:
+    if n <= 0:
+        return []
+    elif n == 1:
+        return [0]
+    
+    fib = [0, 1]
+    for i in range(2, n):
+        fib.append(fib[i-1] + fib[i-2])
+    return fib
+
+print(fibonacci(10))
+```
+
+```css [styles/main.css]
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+```
+
+```bash [deploy.sh]
+#!/bin/bash
+
+echo "Hello, World!"
+
+for i in {1..5}; do
+  echo "Count: $i"
+done
+```
+
+```json [package.json]
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18.2.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+```sql [查询活跃用户]
+SELECT 
+  users.name,
+  COUNT(orders.id) as order_count
+FROM users
+LEFT JOIN orders ON users.id = orders.user_id
+WHERE users.created_at >= '2024-01-01'
+GROUP BY users.id
+HAVING COUNT(orders.id) > 5
+ORDER BY order_count DESC;
+```
+
+## 表格
+
+| 功能 | 语法 | 示例 |
+|------|------|------|
+| 粗体 | `**text**` | **粗体** |
+| 斜体 | `*text*` | *斜体* |
+| 代码 | `` `code` `` | `code` |
+| 链接 | `[text](url)` | [链接](/) |
+
+### 对齐方式
+
+| 左对齐 | 居中对齐 | 右对齐 |
+|:-------|:--------:|-------:|
+| 内容 | 内容 | 内容 |
+| 左 | 中 | 右 |
+
+## 分隔线
+
+使用三个或更多的 `-`、`*` 或 `_` 创建分隔线：
+
+---
+
+上面是一条分隔线。
+
+## 转义字符
+
+使用反斜杠转义特殊字符：
+
+\*这不是斜体\*
+
+\`这不是代码\`
+
+## 脚注
+
+这是一个带脚注的句子[^1]。
+
+这是另一个脚注[^note]。
+
+[^1]: 这是脚注的内容。
+[^note]: 脚注可以使用任意标识符。
+
+## HTML 标签
+
+Markdown 支持内嵌 HTML：
+
+<details>
+<summary>点击展开详情</summary>
+
+这是隐藏的内容，点击上方可以展开或收起。
+
+- 支持列表
+- 支持其他 Markdown 语法
+
+</details>
+
+<kbd>Ctrl</kbd> + <kbd>C</kbd> 复制
+
+<mark>高亮文本</mark>
+
+## 数学公式
+
+行内公式：$E = mc^2$
+
+块级公式：
+
+$$
+\frac{n!}{k!(n-k)!} = \binom{n}{k}
+$$
+
+## 总结
+
+以上就是 Markdown 的常用语法。熟练掌握这些语法，可以让你的文档更加清晰、美观。
