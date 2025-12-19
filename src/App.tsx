@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-do
 import Home from './pages/Home'
 import PostDetail from './pages/PostDetail'
 import { ConfigProvider, useConfig } from './config/ConfigContext'
+import { baseUrl } from './config'
 import ConfigPanel from './components/ConfigPanel'
 import './App.css'
 
@@ -40,7 +41,7 @@ function AppContent() {
   const [activeId, setActiveId] = useState('')
   const { config } = useConfig()
   const location = useLocation()
-  const isHome = location.pathname === '/'
+  const isHome = location.pathname === '/' || location.pathname === ''
   const isPostPage = location.pathname.startsWith('/post/')
 
   // 应用主题（不带动画）
@@ -289,7 +290,7 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={baseUrl || '/'}>
       <ConfigProvider>
         <AppContent />
       </ConfigProvider>
