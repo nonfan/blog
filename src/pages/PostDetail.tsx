@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getPostBySlug } from '../utils/posts'
 import { useMobileMenu } from '../App'
 import { useConfig } from '../config/ConfigContext'
+import { baseUrl } from '../config'
 import PostFooter from '../components/PostFooter'
 
 interface TocItem {
@@ -34,8 +35,16 @@ export default function PostDetail() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 获取预渲染的 HTML
-  const html = slug ? htmlModules[`/src/generated/html/${slug}.html`] || '' : ''
+  // 获取预渲染的 HTML，并处理图片路径
+  const html = useMemo(() => {
+    const rawHtml = slug ? htmlModules[`/src/generated/html/${slug}.html`] || '' : ''
+    if (!baseUrl) return rawHtml
+    // 给相对路径的图片添加 baseUrl
+    return rawHtml.replace(
+      /(<img[^>]+src=["'])\/(?!\/)/g,
+      `$1${baseUrl}/`
+    )
+  }, [slug])
 
   // 从 HTML 中提取目录
   const toc = useMemo(() => {
