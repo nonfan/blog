@@ -2,7 +2,18 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllPosts } from '../utils/posts'
 import { useConfig } from '../config/ConfigContext'
+import { baseUrl } from '../config'
 import type { Post } from '../types/post'
+
+// 处理资源路径，给相对路径添加 baseUrl
+function getAssetUrl(path?: string): string | undefined {
+  if (!path) return undefined
+  if (path.startsWith('http')) return path
+  if (!baseUrl) return path
+  // 确保路径以 / 开头
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  return `${baseUrl}${cleanPath}`
+}
 
 const posts = getAllPosts()
 
@@ -57,7 +68,7 @@ export default function Home({ searchQuery }: HomeProps) {
         {filteredPosts.map((post: Post) => (
           <Link to={`/post/${post.slug}`} key={post.slug} className="article-card">
             <div className="card-header">
-              {post.logo && <img src={post.logo} alt="" className="card-logo" />}
+              {post.logo && <img src={getAssetUrl(post.logo)} alt="" className="card-logo" />}
               <div className="card-title-section">
                 <div className="card-title">{highlightText(post.title)}</div>
                 <div className="card-tags">
