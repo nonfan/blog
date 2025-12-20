@@ -2120,6 +2120,85 @@ a.article-card {
   }
 }
 
+/* 页脚 */
+.site-footer {
+  margin-top: 60px;
+  padding: 32px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.footer-repo {
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.footer-repo:hover {
+  color: var(--color-primary);
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.footer-license {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-copyright {
+  color: #6b7280;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+}
+
+.footer-links a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--color-primary);
+}
+
+.app.dark .site-footer {
+  border-top-color: #374151;
+}
+
+.app.dark .footer-repo {
+  color: #9ca3af;
+}
+
+.app.dark .footer-info {
+  color: #6b7280;
+}
+
+.app.dark .footer-copyright {
+  color: #9ca3af;
+}
+
+.app.dark .footer-links a {
+  color: #9ca3af;
+}
+
 
 /* 打印样式 */
 @media print {

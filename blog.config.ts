@@ -34,5 +34,14 @@ export default {
     showTags: true, // 显示标签
     showSplashOnce: false, // 开屏动画只显示一次（默认每次刷新都显示）
     disableSplash: false, // 永久关闭开屏动画
+    showFooter: true, // 显示页脚
+  },
+
+  // 页脚配置
+  footer: {
+    copyright: '2025-present', // 版权年份
+    links: [
+      // { text: '关于', url: '/about' },
+    ],
   },
 }

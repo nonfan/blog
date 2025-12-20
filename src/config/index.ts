@@ -23,6 +23,7 @@ export interface BlogConfig {
     showTags: boolean // 显示标签
     showSplashOnce: boolean // 开屏动画只显示一次
     disableSplash: boolean // 永久关闭开屏动画
+    showFooter: boolean // 显示页脚
   }
 
   // GitHub 配置
@@ -30,6 +31,12 @@ export interface BlogConfig {
     repo: string // 仓库地址，如 'username/repo'
     branch: string // 分支名
     postsDir: string // 文章目录
+  }
+
+  // 页脚配置
+  footer: {
+    copyright: string // 版权年份
+    links: Array<{ text: string; url: string }> // 页脚链接
   }
 }
 
@@ -80,11 +87,16 @@ export const defaultConfig: BlogConfig = {
     showTags: blogConfig.features?.showTags ?? true,
     showSplashOnce: blogConfig.features?.showSplashOnce ?? false,
     disableSplash: blogConfig.features?.disableSplash ?? false,
+    showFooter: blogConfig.features?.showFooter ?? true,
   },
   github: {
     repo: normalizeRepo(blogConfig.github?.repo),
     branch: blogConfig.github?.branch || 'main',
     postsDir: blogConfig.github?.postsDir || 'posts',
+  },
+  footer: {
+    copyright: blogConfig.footer?.copyright || `${new Date().getFullYear()}`,
+    links: blogConfig.footer?.links || [],
   },
 }
 
