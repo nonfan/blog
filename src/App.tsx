@@ -33,9 +33,21 @@ export const useMobileMenu = () => useContext(MobileMenuContext)
 function AppContent() {
   const { config } = useConfig()
   const [showSplash, setShowSplash] = useState(() => {
-    // 如果配置为只显示一次，检查 sessionStorage
-    if (config.features.showSplashOnce) {
-      return !sessionStorage.getItem('splashShown')
+    // 直接从 localStorage 读取配置判断
+    try {
+      const saved = localStorage.getItem('blog-config')
+      const savedConfig = saved ? JSON.parse(saved) : null
+      const showOnce = savedConfig?.features?.showSplashOnce ?? false
+      if (showOnce) {
+        const shouldShow = !sessionStorage.getItem('splashShown')
+        if (!shouldShow) {
+          // 不显示 splash 时立即移除遮罩
+          document.documentElement.classList.add('loaded')
+        }
+        return shouldShow
+      }
+    } catch {
+      // ignore parse errors
     }
     return true
   })
@@ -54,12 +66,16 @@ function AppContent() {
 
   // 应用主题（不带动画）
   const applyTheme = (newTheme: Theme) => {
+    let dark = false
     if (newTheme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      setIsDark(mediaQuery.matches)
+      dark = mediaQuery.matches
     } else {
-      setIsDark(newTheme === 'dark')
+      dark = newTheme === 'dark'
     }
+    setIsDark(dark)
+    // 同步到 html 元素，供 splash screen 使用
+    document.documentElement.classList.toggle('dark', dark)
   }
 
   // 带动画的主题切换
@@ -73,7 +89,7 @@ function AppContent() {
     }
 
     const isAppearanceTransition =
-      // @ts-ignore
+      // @ts-expect-error - startViewTransition is not yet in TypeScript types
       document.startViewTransition &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -89,7 +105,6 @@ function AppContent() {
       Math.max(y, window.innerHeight - y)
     )
 
-    // @ts-ignore
     const transition = document.startViewTransition(async () => {
       setTheme(newTheme)
       // 等待 React 更新 DOM

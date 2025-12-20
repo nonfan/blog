@@ -12,7 +12,8 @@ function normalizeBase(base?: string): string {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: normalizeBase(blogConfig.site?.baseUrl),
-})
+  // 开发模式使用根路径，生产构建使用配置的 baseUrl
+  base: command === 'serve' ? '/' : normalizeBase(blogConfig.site?.baseUrl),
+}))

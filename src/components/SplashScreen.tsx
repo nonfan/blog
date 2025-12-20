@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { useConfig } from '../config/ConfigContext'
+import gsap from 'gsap'
 import './SplashScreen.css'
 
 interface SplashScreenProps {
@@ -8,65 +9,174 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const { config } = useConfig()
-  const [progress, setProgress] = useState(0)
-  const [fadeOut, setFadeOut] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const logoRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLDivElement>(null)
+  const cornersRef = useRef<HTMLDivElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
+  const numberRef = useRef<HTMLSpanElement>(null)
+  const topClipRef = useRef<HTMLDivElement>(null)
+  const bottomClipRef = useRef<HTMLDivElement>(null)
   const title = config.site.title || 'My Blog'
 
   useEffect(() => {
-    // 模拟加载进度
-    const duration = 2000 // 总时长 2 秒
-    const interval = 30
-    const step = 100 / (duration / interval)
+    document.documentElement.classList.add('loaded')
     
-    const timer = setInterval(() => {
-      setProgress(prev => {
-        const next = prev + step + Math.random() * 2
-        if (next >= 100) {
-          clearInterval(timer)
-          // 进度完成后开始淡出
-          setTimeout(() => {
-            setFadeOut(true)
-            setTimeout(onComplete, 500)
-          }, 300)
-          return 100
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline()
+      
+      // 计算标题宽度的一半，用于 Logo 初始偏移
+      const titleWidth = titleRef.current?.offsetWidth || 0
+      const logoOffset = (titleWidth + 18) / 2
+      
+      // 设置 Logo 初始位置（居中）
+      gsap.set(logoRef.current, { x: logoOffset })
+      
+      // 进度数字动画 - 延长到整体离开时到达100
+      const progressObj = { value: 0 }
+      gsap.to(progressObj, {
+        value: 100,
+        duration: 3.85,
+        ease: 'power1.inOut',
+        onUpdate: () => {
+          if (numberRef.current) {
+            numberRef.current.textContent = Math.round(progressObj.value).toString()
+          }
         }
-        return next
       })
-    }, interval)
 
-    return () => clearInterval(timer)
+      // 1. Logo 模糊浮现
+      tl.to(logoRef.current, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        scale: 1,
+        duration: 0.9,
+        ease: 'power2.out'
+      }, 0.3)
+
+      // 进度显示
+      tl.to(progressRef.current, {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power2.out'
+      }, 0.4)
+
+      // 2. Logo 左移
+      tl.to(logoRef.current, {
+        x: 0,
+        duration: 0.55,
+        ease: 'power2.inOut'
+      }, 1.5)
+
+      // 标题整体从下到上出现
+      tl.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power2.out'
+      }, 2.1)
+
+      // 四角边框显示
+      const corners = cornersRef.current?.querySelectorAll('.corner') || []
+      tl.to(corners, {
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power2.out'
+      }, 2.2)
+
+      // 3. 退出动画：上下遮罩向中心闭合，挤压内容
+      const contentHeight = cornersRef.current?.offsetHeight || 0
+      const clipHeight = contentHeight / 2
+      
+      // 上遮罩从上往下展开
+      tl.to(topClipRef.current, {
+        height: clipHeight,
+        duration: 0.6,
+        ease: 'power2.inOut'
+      }, 3.2)
+      
+      // 下遮罩从下往上展开
+      tl.to(bottomClipRef.current, {
+        height: clipHeight,
+        duration: 0.6,
+        ease: 'power2.inOut'
+      }, 3.2)
+      
+      // 上面两个角向下移动
+      tl.to('.corner.tl, .corner.tr', {
+        y: clipHeight,
+        duration: 0.6,
+        ease: 'power2.inOut'
+      }, 3.2)
+      
+      // 下面两个角向上移动
+      tl.to('.corner.bl, .corner.br', {
+        y: -clipHeight,
+        duration: 0.6,
+        ease: 'power2.inOut'
+      }, 3.2)
+      
+      // 进度淡出
+      tl.to(progressRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.out'
+      }, 3.2)
+      
+      // 4. 闭合后整体向上离开
+      tl.to(containerRef.current, {
+        yPercent: -100,
+        duration: 0.6,
+        ease: 'power3.inOut'
+      }, 3.85)
+      
+      // 完成后触发回调
+      tl.call(onComplete, [], 4.5)
+
+    }, containerRef)
+
+    return () => ctx.revert()
   }, [onComplete])
 
   return (
-    <div className={`splash-screen ${fadeOut ? 'fade-out' : ''}`}>
-      {/* 点阵背景 */}
+    <div ref={containerRef} className="splash-screen">
       <div className="splash-dots" />
-      
-      {/* 主内容 */}
+      <div className="splash-mask" />
+
       <div className="splash-content">
-        {/* 四角边框 */}
-        <div className="splash-corners">
-          <span className="corner top-left" />
-          <span className="corner top-right" />
-          <span className="corner bottom-left" />
-          <span className="corner bottom-right" />
+        <div ref={cornersRef} className="splash-corners">
+          <svg className="corner tl" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M0 20V0H20" fill="none" stroke="currentColor" strokeWidth="4"/>
+          </svg>
+          <svg className="corner tr" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M20 20V0H0" fill="none" stroke="currentColor" strokeWidth="4"/>
+          </svg>
+          <svg className="corner bl" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M0 0V20H20" fill="none" stroke="currentColor" strokeWidth="4"/>
+          </svg>
+          <svg className="corner br" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M20 0V20H0" fill="none" stroke="currentColor" strokeWidth="4"/>
+          </svg>
+          
+          {/* 上下遮罩层 - 用于挤压效果 */}
+          <div ref={topClipRef} className="splash-clip splash-clip-top" />
+          <div ref={bottomClipRef} className="splash-clip splash-clip-bottom" />
         </div>
 
-        {/* Logo 和标题 */}
-        <div className="splash-logo-wrapper">
-          <div className="splash-logo">
-            <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="var(--color-primary)" fillOpacity="0.15"/>
-              <path d="M8 10h16M8 16h12M8 22h8" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"/>
-            </svg>
+        <div className="splash-brand">
+          <div ref={logoRef} className="splash-logo">
+            {config.site.logo ? (
+              <img src={config.site.logo} alt="" />
+            ) : (
+              <svg width="52" height="52" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="var(--color-primary)" fillOpacity="0.12"/>
+                <path d="M8 10h16M8 16h12M8 22h8" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"/>
+              </svg>
+            )}
           </div>
-          <div className="splash-title">
+          <div ref={titleRef} className="splash-title">
             {title.split('').map((char, i) => (
-              <span 
-                key={i} 
-                className="splash-char"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
+              <span key={i} className="char">
                 {char === ' ' ? '\u00A0' : char}
               </span>
             ))}
@@ -74,9 +184,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         </div>
       </div>
 
-      {/* 底部进度 */}
-      <div className="splash-progress">
-        <span className="progress-text">{Math.round(progress)}%</span>
+      <div ref={progressRef} className="splash-progress">
+        <span ref={numberRef} className="progress-number">0</span>
+        <span className="progress-percent">%</span>
       </div>
     </div>
   )

@@ -6,150 +6,127 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  background: #ffffff;
 }
 
-.dark .splash-screen {
-  background: #0f0f0f;
+html.dark .splash-screen {
+  background: #0a0a0a;
 }
 
-.splash-screen.fade-out {
-  opacity: 0;
-  visibility: hidden;
-}
-
-/* 点阵背景 */
+/* 点阵背景 - 覆盖全屏 */
 .splash-dots {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.5;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+  background-size: 14px 14px;
 }
 
-.dark .splash-dots {
-  background-image: radial-gradient(circle, #333 1px, transparent 1px);
+html.dark .splash-dots {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
 }
 
-/* 主内容区域 */
+/* 中间白色遮罩区域 */
+.splash-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 480px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html.dark .splash-mask {
+  background: #0a0a0a;
+  border-top-color: rgba(255, 255, 255, 0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* 主内容 */
 .splash-content {
   position: relative;
-  padding: 60px 80px;
+  padding: 30px 40px;
+  z-index: 2;
 }
 
-/* 四角边框 */
+/* 四角边框容器 */
+.splash-corners {
+  position: absolute;
+  inset: 0;
+  color: #000000;
+}
+
+html.dark .splash-corners {
+  color: #ffffff;
+}
+
+/* 四角边框 - SVG */
 .splash-corners .corner {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-color: #ccc;
-  border-style: solid;
-  border-width: 0;
-  animation: cornerFadeIn 0.6s ease forwards;
   opacity: 0;
 }
 
-.dark .splash-corners .corner {
-  border-color: #444;
-}
-
-.corner.top-left {
+.corner.tl {
   top: 0;
   left: 0;
-  border-top-width: 2px;
-  border-left-width: 2px;
-  animation-delay: 0.2s;
 }
 
-.corner.top-right {
+.corner.tr {
   top: 0;
   right: 0;
-  border-top-width: 2px;
-  border-right-width: 2px;
-  animation-delay: 0.3s;
 }
 
-.corner.bottom-left {
+.corner.bl {
   bottom: 0;
   left: 0;
-  border-bottom-width: 2px;
-  border-left-width: 2px;
-  animation-delay: 0.4s;
 }
 
-.corner.bottom-right {
+.corner.br {
   bottom: 0;
   right: 0;
-  border-bottom-width: 2px;
-  border-right-width: 2px;
-  animation-delay: 0.5s;
 }
 
-@keyframes cornerFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Logo 和标题 */
-.splash-logo-wrapper {
+/* Logo + 标题容器 */
+.splash-brand {
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
+/* Logo - 初始状态 */
 .splash-logo {
-  animation: logoIn 0.6s ease forwards;
   opacity: 0;
+  filter: blur(8px);
+  transform: scale(0.92);
+  margin-right: 18px;
 }
 
-@keyframes logoIn {
-  from {
-    opacity: 0;
-    transform: scale(0.5) rotate(-45deg);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
+.splash-logo img,
+.splash-logo svg {
+  width: 88px;
+  height: 88px;
+  display: block;
 }
 
+/* 标题 */
 .splash-title {
   display: flex;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: 0.05em;
-}
-
-.dark .splash-title {
-  color: #f5f5f5;
-}
-
-.splash-char {
-  display: inline-block;
+  font-size: 4rem;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: 0.02em;
+  overflow: hidden;
   opacity: 0;
-  animation: charIn 0.4s ease forwards;
+  transform: translateY(30px);
 }
 
-@keyframes charIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+html.dark .splash-title {
+  color: #ffffff;
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.splash-title .char {
+  display: inline-block;
 }
 
 /* 底部进度 */
@@ -158,31 +135,83 @@
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  color: #000000;
+  opacity: 0;
+  z-index: 2;
 }
 
-.progress-text {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #888;
+html.dark .splash-progress {
+  color: #ffffff;
+}
+
+.progress-number {
+  font-size: 1.8rem;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: inherit;
 }
 
-.dark .progress-text {
-  color: #666;
+.progress-percent {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-left: 2px;
+  color: inherit;
 }
 
 /* 响应式 */
 @media (max-width: 640px) {
+  .splash-mask {
+    height: 400px;
+  }
+
   .splash-content {
     padding: 40px 50px;
   }
 
-  .splash-title {
-    font-size: 1.8rem;
+  .splash-logo img,
+  .splash-logo svg {
+    width: 48px;
+    height: 48px;
   }
 
-  .splash-logo svg {
-    width: 36px;
-    height: 36px;
+  .splash-title {
+    font-size: 2rem;
   }
+
+  .progress-number {
+    font-size: 2.5rem;
+  }
+
+  .progress-percent {
+    font-size: 1.2rem;
+  }
+
+  .splash-progress {
+    bottom: 50px;
+  }
+}
+
+/* 上下遮罩层 - 挤压效果 */
+.splash-clip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: #ffffff;
+  z-index: 5;
+}
+
+html.dark .splash-clip {
+  background: #0a0a0a;
+}
+
+.splash-clip-top {
+  top: 0;
+}
+
+.splash-clip-bottom {
+  bottom: 0;
 }

@@ -43,8 +43,8 @@ function normalizeBase(base?: string): string {
   return normalized
 }
 
-// 获取标准化后的 base URL
-export const baseUrl = normalizeBase(blogConfig.site?.baseUrl)
+// 获取标准化后的 base URL（开发模式下为空）
+export const baseUrl = import.meta.env.DEV ? '' : normalizeBase(blogConfig.site?.baseUrl)
 
 // 处理资源路径，自动拼接 baseUrl
 function formatAssetPath(path?: string): string | undefined {
