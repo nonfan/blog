@@ -21,6 +21,7 @@ export interface BlogConfig {
     showLastUpdated: boolean // 显示最后更新时间
     showToc: boolean // 显示目录
     showTags: boolean // 显示标签
+    showSplashOnce: boolean // 开屏动画只显示一次
   }
 
   // GitHub 配置
@@ -76,6 +77,7 @@ export const defaultConfig: BlogConfig = {
     showLastUpdated: blogConfig.features?.showLastUpdated ?? true,
     showToc: blogConfig.features?.showToc ?? true,
     showTags: blogConfig.features?.showTags ?? true,
+    showSplashOnce: blogConfig.features?.showSplashOnce ?? false,
   },
   github: {
     repo: normalizeRepo(blogConfig.github?.repo),

@@ -5,6 +5,7 @@ import PostDetail from './pages/PostDetail'
 import { ConfigProvider, useConfig } from './config/ConfigContext'
 import { baseUrl } from './config'
 import ConfigPanel from './components/ConfigPanel'
+import SplashScreen from './components/SplashScreen'
 import './App.css'
 
 type Theme = 'system' | 'light' | 'dark'
@@ -30,6 +31,14 @@ export const MobileMenuContext = createContext<MobileMenuContextType>({
 export const useMobileMenu = () => useContext(MobileMenuContext)
 
 function AppContent() {
+  const { config } = useConfig()
+  const [showSplash, setShowSplash] = useState(() => {
+    // 如果配置为只显示一次，检查 sessionStorage
+    if (config.features.showSplashOnce) {
+      return !sessionStorage.getItem('splashShown')
+    }
+    return true
+  })
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('theme')
     return (saved as Theme) || 'system'
@@ -39,7 +48,6 @@ function AppContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [toc, setToc] = useState<{ id: string; text: string; level: number }[]>([])
   const [activeId, setActiveId] = useState('')
-  const { config } = useConfig()
   const location = useLocation()
   const isHome = location.pathname === '/' || location.pathname === ''
   const isPostPage = location.pathname.startsWith('/post/')
@@ -131,8 +139,16 @@ function AppContent() {
     }, 100)
   }
 
+  const handleSplashComplete = () => {
+    setShowSplash(false)
+    if (config.features.showSplashOnce) {
+      sessionStorage.setItem('splashShown', 'true')
+    }
+  }
+
   return (
     <MobileMenuContext.Provider value={{ isOpen: mobileMenuOpen, setIsOpen: setMobileMenuOpen, toc, setToc, activeId, setActiveId }}>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <div className={`app ${isDark ? 'dark' : ''}`}>
         <header className="header">
           <Link to="/" className="logo">

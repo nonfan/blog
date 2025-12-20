@@ -1,0 +1,188 @@
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.dark .splash-screen {
+  background: #0f0f0f;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* 点阵背景 */
+.splash-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.5;
+}
+
+.dark .splash-dots {
+  background-image: radial-gradient(circle, #333 1px, transparent 1px);
+}
+
+/* 主内容区域 */
+.splash-content {
+  position: relative;
+  padding: 60px 80px;
+}
+
+/* 四角边框 */
+.splash-corners .corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 0;
+  animation: cornerFadeIn 0.6s ease forwards;
+  opacity: 0;
+}
+
+.dark .splash-corners .corner {
+  border-color: #444;
+}
+
+.corner.top-left {
+  top: 0;
+  left: 0;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  animation-delay: 0.2s;
+}
+
+.corner.top-right {
+  top: 0;
+  right: 0;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  animation-delay: 0.3s;
+}
+
+.corner.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  animation-delay: 0.4s;
+}
+
+.corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  animation-delay: 0.5s;
+}
+
+@keyframes cornerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Logo 和标题 */
+.splash-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.splash-logo {
+  animation: logoIn 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes logoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-45deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.splash-title {
+  display: flex;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.05em;
+}
+
+.dark .splash-title {
+  color: #f5f5f5;
+}
+
+.splash-char {
+  display: inline-block;
+  opacity: 0;
+  animation: charIn 0.4s ease forwards;
+}
+
+@keyframes charIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 底部进度 */
+.splash-progress {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.progress-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #888;
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .progress-text {
+  color: #666;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .splash-content {
+    padding: 40px 50px;
+  }
+
+  .splash-title {
+    font-size: 1.8rem;
+  }
+
+  .splash-logo svg {
+    width: 36px;
+    height: 36px;
+  }
+}

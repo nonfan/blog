@@ -176,6 +176,15 @@ export default function ConfigPanel() {
                     />
                     <span className="switch-slider" />
                   </label>
+                  <label className="config-switch">
+                    <span>开屏动画只显示一次</span>
+                    <input
+                      type="checkbox"
+                      checked={config.features.showSplashOnce}
+                      onChange={e => updateFeature('showSplashOnce', e.target.checked)}
+                    />
+                    <span className="switch-slider" />
+                  </label>
                 </div>
               </div>
 

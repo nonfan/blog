@@ -32,5 +32,6 @@ export default {
     showLastUpdated: true, // 显示最后更新时间
     showToc: true, // 显示目录
     showTags: true, // 显示标签
+    showSplashOnce: false, // 开屏动画只显示一次（默认每次刷新都显示）
   },
 }
