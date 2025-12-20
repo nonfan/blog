@@ -3,6 +3,8 @@
   background: #fafafa;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* 顶部栏 */
@@ -1411,8 +1413,10 @@ a.article-card {
   }
 
   .post-layout {
-    padding: 20px;
+    padding: 16px;
     padding-top: 80px;
+    max-width: 100%;
+    width: 100%;
   }
 
   .post-title {
