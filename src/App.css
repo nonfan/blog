@@ -2123,89 +2123,56 @@ a.article-card {
 /* 页脚 */
 .site-footer {
   margin-top: 60px;
-  padding: 24px 0;
+  padding: 24px 0 0;
 }
 
 .footer-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 4px;
   font-size: 13px;
   color: #9ca3af;
-}
-
-.footer-repo {
-  color: #9ca3af;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-}
-
-.footer-repo:hover {
-  color: var(--color-primary);
-}
-
-.footer-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding-bottom: 20px;
 }
 
 .footer-license {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-primary);
-}
-
-.footer-license a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.footer-license a:hover {
-  text-decoration: underline;
+  color: #9ca3af;
 }
 
 .footer-copyright {
   color: #9ca3af;
 }
 
-.footer-links {
-  display: flex;
-  gap: 16px;
-  font-size: 13px;
-}
-
-.footer-links a {
+.footer-author {
   color: #6b7280;
-  text-decoration: none;
-  transition: color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.footer-links a:hover {
+.footer-author:hover {
   color: var(--color-primary);
+}
+
+.footer-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light, var(--color-primary)));
 }
 
 .app.dark .footer-content {
   color: #6b7280;
 }
 
-.app.dark .footer-repo {
-  color: #6b7280;
-}
-
 .app.dark .footer-license {
-  color: var(--color-primary-light);
-}
-
-.app.dark .footer-license a {
-  color: var(--color-primary-light);
+  color: #6b7280;
 }
 
 .app.dark .footer-copyright {
   color: #6b7280;
+}
+
+.app.dark .footer-author {
+  color: #9ca3af;
 }
 
 .app.dark .footer-links a {
