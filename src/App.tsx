@@ -273,20 +273,29 @@ function AppContent() {
               )}
             </button>
 
-            {/* 菜单按钮 */}
-            <button 
-              className="mobile-menu-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="菜单"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {mobileMenuOpen ? (
-                  <path d="M18 6L6 18M6 6l12 12"/>
-                ) : (
-                  <path d="M3 12h18M3 6h18M3 18h18"/>
-                )}
-              </svg>
-            </button>
+            {/* 菜单按钮 - 仅在文章页且有目录时显示 */}
+            {isPostPage && toc.length > 0 && (
+              <button
+                className="mobile-menu-btn"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="菜单"
+              >
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  {mobileMenuOpen ? (
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  ) : (
+                    <path d="M3 12h18M3 6h18M3 18h18" />
+                  )}
+                </svg>
+              </button>
+            )}
           </div>
         </header>
 
