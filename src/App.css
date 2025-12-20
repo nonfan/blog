@@ -149,7 +149,7 @@ body.config-open .header {
   gap: 8px;
   max-height: 36px;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tags-filter.expanded .tags-filter-list {
@@ -170,6 +170,14 @@ body.config-open .header {
   transition: all 0.2s;
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+.tags-expand-btn svg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tags-filter.expanded .tags-expand-btn svg {
+  transform: rotate(180deg);
 }
 
 .tags-expand-btn:hover {
