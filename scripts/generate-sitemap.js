@@ -1,10 +1,9 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
 
-// 读取配置
-const blogConfig = (await import('../blog.config.ts')).default
-
-const baseUrl = blogConfig.site?.baseUrl || ''
+// 从 blog.config.ts 读取 baseUrl（简单解析）
+const configContent = readFileSync('./blog.config.ts', 'utf-8')
+const baseUrlMatch = configContent.match(/baseUrl:\s*['"]([^'"]*)['"]/);
+const baseUrl = baseUrlMatch ? baseUrlMatch[1] : ''
 const siteUrl = `https://nonfan.github.io${baseUrl}`
 
 // 读取文章数据
