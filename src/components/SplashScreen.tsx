@@ -22,120 +22,167 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline()
-      
+
       // 动画开始后再移除初始遮罩
-      tl.call(() => {
-        document.documentElement.classList.add('loaded')
-      }, [], 0.1)
-      
+      tl.call(
+        () => {
+          document.documentElement.classList.add('loaded')
+        },
+        [],
+        0.1
+      )
+
       // 计算标题宽度的一半，用于 Logo 初始偏移
       const titleWidth = titleRef.current?.offsetWidth || 0
       const logoOffset = (titleWidth + 18) / 2
-      
+
       // 设置 Logo 初始位置（居中）
       gsap.set(logoRef.current, { x: logoOffset })
-      
-      // 进度数字动画 - 延长到整体离开时到达100
+
+      // 进度数字动画 - 到整体离开时到达100
       const progressObj = { value: 0 }
       gsap.to(progressObj, {
         value: 100,
-        duration: 3.85,
+        duration: 2.4,
         ease: 'power1.inOut',
         onUpdate: () => {
           if (numberRef.current) {
             numberRef.current.textContent = Math.round(progressObj.value).toString()
           }
-        }
+        },
       })
 
       // 1. Logo 模糊浮现
-      tl.to(logoRef.current, {
-        opacity: 1,
-        filter: 'blur(0px)',
-        scale: 1,
-        duration: 0.9,
-        ease: 'power2.out'
-      }, 0.3)
+      tl.to(
+        logoRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          scale: 1,
+          duration: 0.6,
+          ease: 'power2.out',
+        },
+        0.2
+      )
 
       // 进度显示
-      tl.to(progressRef.current, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, 0.4)
+      tl.to(
+        progressRef.current,
+        {
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+        },
+        0.3
+      )
 
       // 2. Logo 左移
-      tl.to(logoRef.current, {
-        x: 0,
-        duration: 0.55,
-        ease: 'power2.inOut'
-      }, 1.5)
+      tl.to(
+        logoRef.current,
+        {
+          x: 0,
+          duration: 0.4,
+          ease: 'power2.inOut',
+        },
+        0.9
+      )
 
       // 标题整体从下到上出现
-      tl.to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, 2.1)
+      tl.to(
+        titleRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.35,
+          ease: 'power2.out',
+        },
+        1.35
+      )
 
       // 四角边框显示
       const corners = cornersRef.current?.querySelectorAll('.corner') || []
-      tl.to(corners, {
-        opacity: 1,
-        duration: 0.4,
-        ease: 'power2.out'
-      }, 2.2)
+      tl.to(
+        corners,
+        {
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+        },
+        1.4
+      )
 
       // 3. 退出动画：上下遮罩向中心闭合，挤压内容
       const contentHeight = cornersRef.current?.offsetHeight || 0
       const clipHeight = contentHeight / 2
-      
-      // 上遮罩从上往下展开
-      tl.to(topClipRef.current, {
-        height: clipHeight,
-        duration: 0.6,
-        ease: 'power2.inOut'
-      }, 3.2)
-      
-      // 下遮罩从下往上展开
-      tl.to(bottomClipRef.current, {
-        height: clipHeight,
-        duration: 0.6,
-        ease: 'power2.inOut'
-      }, 3.2)
-      
-      // 上面两个角向下移动
-      tl.to('.corner.tl, .corner.tr', {
-        y: clipHeight,
-        duration: 0.6,
-        ease: 'power2.inOut'
-      }, 3.2)
-      
-      // 下面两个角向上移动
-      tl.to('.corner.bl, .corner.br', {
-        y: -clipHeight,
-        duration: 0.6,
-        ease: 'power2.inOut'
-      }, 3.2)
-      
-      // 进度淡出
-      tl.to(progressRef.current, {
-        opacity: 0,
-        duration: 0.3,
-        ease: 'power2.out'
-      }, 3.2)
-      
-      // 4. 闭合后整体向上离开
-      tl.to(containerRef.current, {
-        yPercent: -100,
-        duration: 0.6,
-        ease: 'power3.inOut'
-      }, 3.85)
-      
-      // 完成后触发回调
-      tl.call(onComplete, [], 4.5)
 
+      // 上遮罩从上往下展开
+      tl.to(
+        topClipRef.current,
+        {
+          height: clipHeight,
+          duration: 0.45,
+          ease: 'power2.inOut',
+        },
+        2.0
+      )
+
+      // 下遮罩从下往上展开
+      tl.to(
+        bottomClipRef.current,
+        {
+          height: clipHeight,
+          duration: 0.45,
+          ease: 'power2.inOut',
+        },
+        2.0
+      )
+
+      // 上面两个角向下移动
+      tl.to(
+        '.corner.tl, .corner.tr',
+        {
+          y: clipHeight,
+          duration: 0.45,
+          ease: 'power2.inOut',
+        },
+        2.0
+      )
+
+      // 下面两个角向上移动
+      tl.to(
+        '.corner.bl, .corner.br',
+        {
+          y: -clipHeight,
+          duration: 0.45,
+          ease: 'power2.inOut',
+        },
+        2.0
+      )
+
+      // 进度淡出
+      tl.to(
+        progressRef.current,
+        {
+          opacity: 0,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        2.0
+      )
+
+      // 4. 闭合后整体向上离开
+      tl.to(
+        containerRef.current,
+        {
+          yPercent: -100,
+          duration: 0.5,
+          ease: 'power3.inOut',
+        },
+        2.5
+      )
+
+      // 完成后触发回调
+      tl.call(onComplete, [], 3.0)
     }, containerRef)
 
     return () => ctx.revert()
