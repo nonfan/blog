@@ -20,10 +20,13 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const title = config.site.title || 'My Blog'
 
   useEffect(() => {
-    document.documentElement.classList.add('loaded')
-    
     const ctx = gsap.context(() => {
       const tl = gsap.timeline()
+      
+      // 动画开始后再移除初始遮罩
+      tl.call(() => {
+        document.documentElement.classList.add('loaded')
+      }, [], 0.1)
       
       // 计算标题宽度的一半，用于 Logo 初始偏移
       const titleWidth = titleRef.current?.offsetWidth || 0
