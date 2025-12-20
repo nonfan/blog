@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getAllPosts } from '../utils/posts'
 import { useConfig } from '../config/ConfigContext'
 import { baseUrl } from '../config'
@@ -26,6 +26,21 @@ function getColumnCount() {
 
 const posts = getAllPosts()
 
+// 获取所有标签及其文章数量
+function getAllTags() {
+  const tagCount = new Map<string, number>()
+  posts.forEach(post => {
+    post.tags.forEach(tag => {
+      tagCount.set(tag, (tagCount.get(tag) || 0) + 1)
+    })
+  })
+  return Array.from(tagCount.entries())
+    .sort((a, b) => b[1] - a[1]) // 按数量降序
+    .map(([tag, count]) => ({ tag, count }))
+}
+
+const allTags = getAllTags()
+
 interface HomeProps {
   searchQuery: string
 }
@@ -33,6 +48,9 @@ interface HomeProps {
 export default function Home({ searchQuery }: HomeProps) {
   const { config } = useConfig()
   const [columnCount, setColumnCount] = useState(getColumnCount)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [tagsExpanded, setTagsExpanded] = useState(false)
+  const selectedTag = searchParams.get('tag')
 
   // 监听窗口大小变化
   useEffect(() => {
@@ -48,13 +66,25 @@ export default function Home({ searchQuery }: HomeProps) {
   // 支持多关键词搜索（空格分隔），匹配任意关键词即可
   const keywords = searchQuery.toLowerCase().split(/\s+/).filter(k => k.length > 0)
 
-  const filteredPosts =
-    keywords.length === 0
-      ? posts
-      : posts.filter(post => {
-          const searchText = `${post.title} ${post.tags.join(' ')} ${post.excerpt}`.toLowerCase()
-          return keywords.some(keyword => searchText.includes(keyword))
-        })
+  // 先按标签筛选，再按关键词搜索
+  const filteredPosts = useMemo(() => {
+    let result = posts
+    
+    // 标签筛选
+    if (selectedTag) {
+      result = result.filter(post => post.tags.includes(selectedTag))
+    }
+    
+    // 关键词搜索
+    if (keywords.length > 0) {
+      result = result.filter(post => {
+        const searchText = `${post.title} ${post.tags.join(' ')} ${post.excerpt}`.toLowerCase()
+        return keywords.some(keyword => searchText.includes(keyword))
+      })
+    }
+    
+    return result
+  }, [selectedTag, keywords])
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('zh-CN', {
@@ -126,16 +156,66 @@ export default function Home({ searchQuery }: HomeProps) {
 
   return (
     <div className="masonry-container">
+      {/* 标签筛选栏 */}
+      {allTags.length > 0 && (
+        <div className={`tags-filter ${tagsExpanded ? 'expanded' : ''}`}>
+          <div className="tags-filter-list">
+            <button
+              className={`tag-filter-btn ${!selectedTag ? 'active' : ''}`}
+              onClick={() => setSearchParams({})}
+            >
+              全部
+            </button>
+            {allTags.map(({ tag, count }) => (
+              <button
+                key={tag}
+                className={`tag-filter-btn ${selectedTag === tag ? 'active' : ''}`}
+                onClick={() => setSearchParams({ tag })}
+              >
+                {tag}
+                <span className="tag-count">{count}</span>
+              </button>
+            ))}
+          </div>
+          <button 
+            className="tags-expand-btn"
+            onClick={() => setTagsExpanded(!tagsExpanded)}
+          >
+            {tagsExpanded ? (
+              <>
+                收起
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="18 15 12 9 6 15"/>
+                </svg>
+              </>
+            ) : (
+              <>
+                展开
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      )}
       <div className="masonry">
         {sortedPosts.map((post: Post) => (
           <Link to={`/post/${post.slug}`} key={post.slug} className="article-card">
             <div className="card-header">
-              {post.logo && <img src={getAssetUrl(post.logo)} alt="" className="card-logo" />}
+              {post.logo && <img src={getAssetUrl(post.logo)} alt="" className="card-logo" loading="lazy" />}
               <div className="card-title-section">
                 <div className="card-title">{highlightText(post.title)}</div>
                 <div className="card-tags">
                   {post.tags.map(tag => (
-                    <span key={tag} className="tag">
+                    <span
+                      key={tag}
+                      className={`tag ${selectedTag === tag ? 'active' : ''}`}
+                      onClick={e => {
+                        e.preventDefault()
+                        setSearchParams({ tag })
+                      }}
+                    >
                       {highlightText(tag)}
                     </span>
                   ))}
