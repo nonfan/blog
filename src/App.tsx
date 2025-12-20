@@ -30,13 +30,28 @@ export const MobileMenuContext = createContext<MobileMenuContextType>({
 
 export const useMobileMenu = () => useContext(MobileMenuContext)
 
+// 检测是否为移动端
+const isMobile = () => window.innerWidth <= 768
+
 function AppContent() {
   const { config } = useConfig()
   const [showSplash, setShowSplash] = useState(() => {
+    // 移动端禁用开屏效果
+    if (isMobile()) {
+      document.documentElement.classList.add('loaded')
+      return false
+    }
     // 直接从 localStorage 读取配置判断
     try {
       const saved = localStorage.getItem('blog-config')
       const savedConfig = saved ? JSON.parse(saved) : null
+      
+      // 永久关闭开屏动画
+      if (savedConfig?.features?.disableSplash) {
+        document.documentElement.classList.add('loaded')
+        return false
+      }
+      
       const showOnce = savedConfig?.features?.showSplashOnce ?? false
       if (showOnce) {
         const shouldShow = !sessionStorage.getItem('splashShown')

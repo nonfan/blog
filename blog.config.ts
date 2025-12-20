@@ -33,5 +33,6 @@ export default {
     showToc: true, // 显示目录
     showTags: true, // 显示标签
     showSplashOnce: false, // 开屏动画只显示一次（默认每次刷新都显示）
+    disableSplash: false, // 永久关闭开屏动画
   },
 }

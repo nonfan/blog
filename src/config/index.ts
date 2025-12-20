@@ -22,6 +22,7 @@ export interface BlogConfig {
     showToc: boolean // 显示目录
     showTags: boolean // 显示标签
     showSplashOnce: boolean // 开屏动画只显示一次
+    disableSplash: boolean // 永久关闭开屏动画
   }
 
   // GitHub 配置
@@ -78,6 +79,7 @@ export const defaultConfig: BlogConfig = {
     showToc: blogConfig.features?.showToc ?? true,
     showTags: blogConfig.features?.showTags ?? true,
     showSplashOnce: blogConfig.features?.showSplashOnce ?? false,
+    disableSplash: blogConfig.features?.disableSplash ?? false,
   },
   github: {
     repo: normalizeRepo(blogConfig.github?.repo),
@@ -126,19 +128,20 @@ export function loadConfig(): BlogConfig {
     const saved = localStorage.getItem(CONFIG_KEY)
     if (saved) {
       const parsed = JSON.parse(saved)
-      // 深度合并，保留 defaultConfig 中的 site 信息（logo 等不应被覆盖）
+      // 深度合并，保留 defaultConfig 中的 site 和 github 信息（从 blog.config.ts 读取）
       return {
         ...defaultConfig,
         ...parsed,
         site: {
           ...defaultConfig.site,
           ...parsed.site,
-          // logo 始终使用默认配置（从 blog.config.ts 读取）
+          // logo 始终使用默认配置
           logo: defaultConfig.site.logo,
         },
         github: {
           ...defaultConfig.github,
-          ...parsed.github,
+          // repo 优先使用 localStorage，如果为空则使用默认配置
+          repo: parsed.github?.repo || defaultConfig.github.repo,
         },
       }
     }

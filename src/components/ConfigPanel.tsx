@@ -22,7 +22,7 @@ export default function ConfigPanel() {
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [customColorInput, setCustomColorInput] = useState('')
   const colorPickerRef = useRef<HTMLDivElement>(null)
-  const { config, updateThemeColor, updateFeature, updateConfig, resetConfig } = useConfig()
+  const { config, updateThemeColor, updateFeature, resetConfig } = useConfig()
 
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
@@ -94,21 +94,7 @@ export default function ConfigPanel() {
                 <div className="config-section-title">主题色</div>
                 <div className="color-grid-wrapper" ref={colorPickerRef}>
                   <div className="color-grid">
-                    {extendedColors.slice(0, 7).map(color => (
-                      <button
-                        key={color.value}
-                        className={`color-grid-item ${config.theme.primaryColor === color.value ? 'active' : ''}`}
-                        style={{ background: color.value }}
-                        onClick={() => {
-                          updateThemeColor(color.value)
-                          setCustomColorInput('')
-                        }}
-                        title={color.name}
-                      />
-                    ))}
-                  </div>
-                  <div className="color-grid color-grid-row2">
-                    {extendedColors.slice(7).map(color => (
+                    {extendedColors.map(color => (
                       <button
                         key={color.value}
                         className={`color-grid-item ${config.theme.primaryColor === color.value ? 'active' : ''}`}
@@ -176,34 +162,33 @@ export default function ConfigPanel() {
                     />
                     <span className="switch-slider" />
                   </label>
-                  <label className="config-switch">
-                    <span>开屏动画只显示一次</span>
+                </div>
+              </div>
+
+              {/* 开屏动画设置 */}
+              <div className="config-section config-section-splash">
+                <div className="config-section-title">开屏动画</div>
+                <div className="config-card-wrapper">
+                  <label
+                    className={`config-switch ${config.features.disableSplash ? 'disabled' : ''}`}
+                  >
+                    <span>首次加载</span>
                     <input
                       type="checkbox"
                       checked={config.features.showSplashOnce}
                       onChange={e => updateFeature('showSplashOnce', e.target.checked)}
+                      disabled={config.features.disableSplash}
                     />
                     <span className="switch-slider" />
                   </label>
-                </div>
-              </div>
-
-              {/* GitHub 配置 */}
-              <div className="config-section">
-                <div className="config-section-title">GitHub</div>
-                <div className="config-input-group">
-                  <label>
-                    <span>仓库地址</span>
+                  <label className="config-switch">
+                    <span>永久关闭</span>
                     <input
-                      type="text"
-                      placeholder="username/repo"
-                      value={config.github.repo}
-                      onChange={e =>
-                        updateConfig({
-                          github: { ...config.github, repo: e.target.value },
-                        })
-                      }
+                      type="checkbox"
+                      checked={config.features.disableSplash}
+                      onChange={e => updateFeature('disableSplash', e.target.checked)}
                     />
+                    <span className="switch-slider" />
                   </label>
                 </div>
               </div>

@@ -1165,6 +1165,10 @@ a.article-card {
     display: flex !important;
   }
 
+  .config-section-splash {
+    display: none !important;
+  }
+
   .header-actions {
     display: flex;
   }
@@ -1400,14 +1404,9 @@ a.article-card {
 }
 
 .color-grid {
-  display: flex;
-  justify-content: space-between;
-}
-
-.color-grid-row2 {
-  margin-top: var(--color-gap);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--color-size), 1fr));
+  gap: var(--color-gap);
 }
 
 .color-grid-item {
@@ -1447,10 +1446,8 @@ a.article-card {
   background: #fff;
   border-radius: 10px;
   padding: 0 12px;
-  /* 占据 4 个格子的宽度：4 * 38px + 3 * 10px = 182px */
-  width: calc(var(--color-size) * 4 + var(--color-gap) * 3);
+  grid-column: 1 / -1;
   height: var(--color-size);
-  flex-shrink: 0;
 }
 
 .custom-hex-input .hex-prefix {
@@ -1486,6 +1483,38 @@ a.article-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.config-switches.config-card {
+  background: #f1f5f9;
+  border-radius: 0;
+  padding: 6px 0;
+  margin: 8px -24px 0;
+}
+
+.config-switches.config-card .config-switch {
+  margin: 0;
+  padding: 10px 24px;
+}
+
+/* 卡片包装器 - 模仿主题色布局 */
+.config-card-wrapper {
+  background: #f1f5f9;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.config-card-wrapper .config-switch {
+  margin: 0;
+  padding: 10px 4px;
+}
+
+.config-card-wrapper .config-switch:hover {
+  background: transparent;
 }
 
 .config-switch {
@@ -1640,8 +1669,20 @@ a.article-card {
   color: #e5e5e5;
 }
 
+.app.dark .config-switches.config-card {
+  background: #111;
+}
+
+.app.dark .config-card-wrapper {
+  background: #111;
+}
+
 .app.dark .config-switch:hover {
   background: #222;
+}
+
+.app.dark .config-card-wrapper .config-switch:hover {
+  background: transparent;
 }
 
 .app.dark .config-switch span:first-child {
