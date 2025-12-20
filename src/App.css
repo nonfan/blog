@@ -2182,10 +2182,6 @@ a.article-card {
   color: #9ca3af;
 }
 
-.app.dark .footer-links a {
-  color: #6b7280;
-}
-
 
 /* 打印样式 */
 @media print {

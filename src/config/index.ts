@@ -36,7 +36,6 @@ export interface BlogConfig {
   // 页脚配置
   footer: {
     copyright: string // 版权年份
-    links: Array<{ text: string; url: string }> // 页脚链接
   }
 }
 
@@ -96,7 +95,6 @@ export const defaultConfig: BlogConfig = {
   },
   footer: {
     copyright: blogConfig.footer?.copyright || `${new Date().getFullYear()}`,
-    links: blogConfig.footer?.links || [],
   },
 }
 

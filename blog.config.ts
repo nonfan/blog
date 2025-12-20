@@ -8,7 +8,7 @@ export default {
     baseUrl: '/blog',
     title: 'My Blog',
     description: '我的个人博客',
-    author: 'mofan',
+    author: 'mofan1',
     logo: 'vite.svg', // logo 文件名（放在 public 目录下，自动拼接 /）
   },
 
@@ -40,8 +40,5 @@ export default {
   // 页脚配置
   footer: {
     copyright: '2025-present', // 版权年份
-    links: [
-      { text: '关于', url: '/about' },
-    ],
   },
 }
