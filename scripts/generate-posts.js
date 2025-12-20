@@ -152,6 +152,16 @@ async function renderMarkdown(body) {
     return `<code class="inline-code">${text}</code>`
   }
 
+  // 外部链接在新标签页打开
+  renderer.link = function({ href, title, text }) {
+    const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'))
+    const titleAttr = title ? ` title="${title}"` : ''
+    if (isExternal) {
+      return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`
+    }
+    return `<a href="${href}"${titleAttr}>${text}</a>`
+  }
+
   marked.setOptions({ renderer })
   let html = marked.parse(body)
   

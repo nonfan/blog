@@ -48,6 +48,16 @@ export default function ConfigPanel() {
     }
   }, [isPresetColor])
 
+  // 打开设置面板时添加 body 类
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('config-open')
+    } else {
+      document.body.classList.remove('config-open')
+    }
+    return () => document.body.classList.remove('config-open')
+  }, [isOpen])
+
   // 处理自定义颜色输入
   const handleCustomColorChange = (value: string) => {
     // 只允许输入 hex 字符
