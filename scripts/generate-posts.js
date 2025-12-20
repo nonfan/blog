@@ -172,6 +172,12 @@ async function renderMarkdown(body) {
     return `<a href="${href}"${titleAttr}>${text}</a>`
   }
 
+  // 图片懒加载
+  renderer.image = function({ href, title, text }) {
+    const titleAttr = title ? ` title="${title}"` : ''
+    return `<img src="${href}" alt="${text || ''}"${titleAttr} loading="lazy" />`
+  }
+
   marked.setOptions({ renderer })
   let html = marked.parse(body)
   
