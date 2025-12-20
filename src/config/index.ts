@@ -157,6 +157,14 @@ export function loadConfig(): BlogConfig {
           // repo 优先使用 localStorage，如果为空则使用默认配置
           repo: parsed.github?.repo || defaultConfig.github.repo,
         },
+        features: {
+          ...defaultConfig.features,
+          ...parsed.features,
+        },
+        footer: {
+          ...defaultConfig.footer,
+          ...parsed.footer,
+        },
       }
     }
   } catch (e) {
