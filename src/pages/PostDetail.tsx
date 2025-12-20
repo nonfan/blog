@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { getPostBySlug } from '../utils/posts'
 import { useMobileMenu } from '../App'
 import { useConfig } from '../config/ConfigContext'
@@ -25,6 +25,11 @@ export default function PostDetail() {
   const { setToc, setActiveId, activeId } = useMobileMenu()
   const { config } = useConfig()
   const [showBackTop, setShowBackTop] = useState(false)
+
+  // 导出 PDF - 使用浏览器打印
+  const handleExportPDF = useCallback(() => {
+    window.print()
+  }, [])
 
   // 监听滚动显示回到顶部
   useEffect(() => {
@@ -146,7 +151,22 @@ export default function PostDetail() {
     <div className="post-layout">
       <div className="post-detail">
         <article className="post-article">
-          <h1 className="post-title">{post.title}</h1>
+          <div className="post-header">
+            <h1 className="post-title">{post.title}</h1>
+            <button 
+              className="export-pdf-btn"
+              onClick={handleExportPDF} 
+              title="导出 PDF"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <polyline points="9 15 12 18 15 15"/>
+              </svg>
+              PDF
+            </button>
+          </div>
           {config.features.showTags && post.tags.length > 0 && (
             <div className="post-meta">
               <div className="post-tags">
@@ -163,7 +183,7 @@ export default function PostDetail() {
           />
 
           {/* 文章底部 */}
-          <PostFooter slug={slug || ''} lastUpdated={post.date} />
+          <PostFooter slug={slug || ''} lastUpdated={post.date} tags={post.tags} />
         </article>
       </div>
 
