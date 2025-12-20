@@ -41,7 +41,7 @@ export default {
   footer: {
     copyright: '2025-present', // 版权年份
     links: [
-      // { text: '关于', url: '/about' },
+      { text: '关于', url: '/about' },
     ],
   },
 }
