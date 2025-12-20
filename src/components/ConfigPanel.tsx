@@ -203,6 +203,22 @@ export default function ConfigPanel() {
                 </div>
               </div>
 
+              {/* 页脚设置 */}
+              <div className="config-section">
+                <div className="config-section-title">页脚</div>
+                <div className="config-switches">
+                  <label className="config-switch">
+                    <span>显示页脚</span>
+                    <input
+                      type="checkbox"
+                      checked={config.features.showFooter}
+                      onChange={e => updateFeature('showFooter', e.target.checked)}
+                    />
+                    <span className="switch-slider" />
+                  </label>
+                </div>
+              </div>
+
               {/* 重置 */}
               <div className="config-section">
                 <button className="config-reset-btn" onClick={resetConfig}>
