@@ -511,6 +511,7 @@ a.article-card {
 /* 文章详情页布局 */
 .post-layout {
   display: flex;
+  flex: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px;
@@ -642,6 +643,8 @@ a.article-card {
   font-size: 16px;
   line-height: 1.8;
   color: #333;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* 标题锚点 */
