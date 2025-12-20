@@ -1,6 +1,8 @@
 .app {
   min-height: 100vh;
   background: #fafafa;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 顶部栏 */
@@ -98,15 +100,12 @@ body.config-open .header {
   padding-top: 100px;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 80px);
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
 .masonry {
   column-count: 4;
   column-gap: 20px;
-  flex: 1;
 }
 
 @media (max-width: 1200px) {

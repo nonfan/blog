@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { getAllPosts } from '../utils/posts'
 import { useConfig } from '../config/ConfigContext'
 import { baseUrl } from '../config'
-import Footer from '../components/Footer'
 import type { Post } from '../types/post'
 
 // 处理资源路径，给相对路径添加 baseUrl
@@ -246,7 +245,6 @@ export default function Home({ searchQuery }: HomeProps) {
           </Link>
         ))}
       </div>
-      <Footer />
     </div>
   )
 }

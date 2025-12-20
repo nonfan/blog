@@ -6,6 +6,7 @@ import { ConfigProvider, useConfig } from './config/ConfigContext'
 import { baseUrl } from './config'
 import ConfigPanel from './components/ConfigPanel'
 import SplashScreen from './components/SplashScreen'
+import Footer from './components/Footer'
 import './App.css'
 
 type Theme = 'system' | 'light' | 'dark'
@@ -324,6 +325,9 @@ function AppContent() {
           <Route path="/" element={<Home searchQuery={searchQuery} />} />
           <Route path="/post/:slug" element={<PostDetail />} />
         </Routes>
+
+        {/* 页脚 - 仅首页显示 */}
+        {isHome && <Footer />}
 
         {/* 右下角浮动按钮 */}
         <div className="floating-buttons">
