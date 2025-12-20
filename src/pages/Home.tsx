@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllPosts } from '../utils/posts'
 import { useConfig } from '../config/ConfigContext'
@@ -15,6 +15,15 @@ function getAssetUrl(path?: string): string | undefined {
   return `${baseUrl}${cleanPath}`
 }
 
+// 获取当前列数
+function getColumnCount() {
+  const width = window.innerWidth
+  if (width <= 600) return 1
+  if (width <= 900) return 2
+  if (width <= 1200) return 3
+  return 4
+}
+
 const posts = getAllPosts()
 
 interface HomeProps {
@@ -23,6 +32,14 @@ interface HomeProps {
 
 export default function Home({ searchQuery }: HomeProps) {
   const { config } = useConfig()
+  const [columnCount, setColumnCount] = useState(getColumnCount)
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => setColumnCount(getColumnCount())
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // 设置页面标题
   useEffect(() => {
@@ -62,10 +79,55 @@ export default function Home({ searchQuery }: HomeProps) {
     })
   }
 
+  // 分离置顶和普通文章，然后重新排列让置顶文章分布在各列顶部
+  const sortedPosts = useMemo(() => {
+    const pinnedPosts = filteredPosts.filter(post => post.pinned)
+    const normalPosts = filteredPosts.filter(post => !post.pinned)
+    
+    // 如果没有置顶文章或只有一列，直接返回原顺序
+    if (pinnedPosts.length === 0 || columnCount === 1) {
+      return filteredPosts
+    }
+    
+    // CSS column 是按列从上到下填充的
+    // 要让置顶文章分布在各列顶部，需要计算每列有多少文章，然后把置顶文章插入到正确位置
+    const totalPosts = filteredPosts.length
+    const postsPerColumn = Math.ceil(totalPosts / columnCount)
+    
+    // 创建结果数组，先用普通文章填充
+    const result: (Post | null)[] = new Array(totalPosts).fill(null)
+    
+    // 计算每列顶部的位置索引，并放置置顶文章
+    const pinnedCount = Math.min(pinnedPosts.length, columnCount)
+    for (let i = 0; i < pinnedCount; i++) {
+      const position = i * postsPerColumn
+      if (position < totalPosts) {
+        result[position] = pinnedPosts[i]
+      }
+    }
+    
+    // 用普通文章填充剩余位置
+    let normalIndex = 0
+    // 先添加超出列数的置顶文章
+    const extraPinned = pinnedPosts.slice(columnCount)
+    
+    for (let i = 0; i < result.length; i++) {
+      if (result[i] === null) {
+        if (extraPinned.length > 0) {
+          result[i] = extraPinned.shift()!
+        } else if (normalIndex < normalPosts.length) {
+          result[i] = normalPosts[normalIndex++]
+        }
+      }
+    }
+    
+    return result.filter(Boolean) as Post[]
+  }, [filteredPosts, columnCount])
+
   return (
     <div className="masonry-container">
       <div className="masonry">
-        {filteredPosts.map((post: Post) => (
+        {sortedPosts.map((post: Post) => (
           <Link to={`/post/${post.slug}`} key={post.slug} className="article-card">
             <div className="card-header">
               {post.logo && <img src={getAssetUrl(post.logo)} alt="" className="card-logo" />}
@@ -91,14 +153,7 @@ export default function Home({ searchQuery }: HomeProps) {
                 </span>
               )}
               <span className="card-date">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
                   <line x1="8" y1="2" x2="8" y2="6" />

@@ -125,6 +125,7 @@ body.config-open .header {
   .search-bar,
   .masonry-container {
     padding: 16px;
+    padding-top: 80px;
   }
 }
 

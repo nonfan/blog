@@ -5,5 +5,5 @@ export interface Post {
   date: string
   logo?: string
   excerpt: string
-  pinned?: boolean
+  pinned?: number | boolean // 数字表示置顶顺序，true 等同于 1
 }

@@ -5,7 +5,7 @@ tags:
   - 教程
   - 示例
 logo: /assets/markdown.png
-pinned: true
+pinned: 1
 ---
 
 这篇文章展示了博客支持的所有 Markdown 语法，可以作为写作参考。
@@ -34,7 +34,30 @@ pinned: true
 | description | string | 否 | 文章摘要，默认取一级标题下的内容 |
 | tags | string[] | 否 | 标签列表 |
 | logo | string | 否 | 文章图标 URL |
-| pinned | boolean | 否 | 是否置顶，默认 false |
+| pinned | boolean \| number | 否 | 置顶设置，见下方说明 |
+
+### 置顶设置
+
+`pinned` 字段支持两种类型：
+
+- `pinned: true` - 置顶文章，但不指定顺序，按日期排序
+- `pinned: 1` / `pinned: 2` / ... - 置顶文章并指定顺序，数字越小越靠前
+
+排序优先级：数字置顶 > true 置顶 > 普通文章
+
+```yaml [置顶示例]
+# 第一个置顶位置
+pinned: 1
+
+# 第二个置顶位置
+pinned: 2
+
+# 置顶但不指定顺序
+pinned: true
+
+# 不置顶（默认）
+pinned: false
+```
 
 ## 标题
 

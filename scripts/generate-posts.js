@@ -37,8 +37,18 @@ function parseFrontmatter(content) {
     const logoMatch = line.match(/^logo:\s*(.+)$/)
     if (logoMatch) frontmatter.logo = logoMatch[1].trim()
 
-    const pinnedMatch = line.match(/^pinned:\s*(true|false)$/i)
-    if (pinnedMatch) frontmatter.pinned = pinnedMatch[1].toLowerCase() === 'true'
+    const pinnedMatch = line.match(/^pinned:\s*(.+)$/i)
+    if (pinnedMatch) {
+      const value = pinnedMatch[1].trim().toLowerCase()
+      if (value === 'true') {
+        frontmatter.pinned = true
+      } else if (value === 'false') {
+        frontmatter.pinned = false
+      } else {
+        const num = parseInt(value, 10)
+        frontmatter.pinned = isNaN(num) ? false : num
+      }
+    }
 
     const descMatch = line.match(/^description:\s*(.+)$/)
     if (descMatch) frontmatter.description = descMatch[1].trim()
@@ -241,8 +251,28 @@ async function main() {
   }
 
   posts.sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1
-    if (!a.pinned && b.pinned) return 1
+    // 置顶文章优先
+    // 数字类型的 pinned 优先于 true，数字越小越靠前
+    // true 类型的 pinned 按日期排序
+    const aIsNumber = typeof a.pinned === 'number'
+    const bIsNumber = typeof b.pinned === 'number'
+    const aIsPinned = a.pinned === true || aIsNumber
+    const bIsPinned = b.pinned === true || bIsNumber
+    
+    // 非置顶文章排在最后
+    if (aIsPinned && !bIsPinned) return -1
+    if (!aIsPinned && bIsPinned) return 1
+    
+    // 都是置顶文章
+    if (aIsPinned && bIsPinned) {
+      // 数字优先于 true
+      if (aIsNumber && !bIsNumber) return -1
+      if (!aIsNumber && bIsNumber) return 1
+      // 都是数字，按数字排序
+      if (aIsNumber && bIsNumber) return a.pinned - b.pinned
+      // 都是 true，按日期排序
+    }
+    
     return new Date(b.date).getTime() - new Date(a.date).getTime()
   })
 
