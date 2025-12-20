@@ -160,30 +160,39 @@ export default function Home({ searchQuery }: HomeProps) {
       {allTags.length > 0 && (
         <div className={`tags-filter ${tagsExpanded ? 'expanded' : ''}`}>
           <div className="tags-filter-list">
-            <button
-              className={`tag-filter-btn ${!selectedTag ? 'active' : ''}`}
-              onClick={() => setSearchParams({})}
-            >
-              全部
-            </button>
-            {allTags.map(({ tag, count }) => (
+            <div className="tags-filter-list-inner">
               <button
-                key={tag}
-                className={`tag-filter-btn ${selectedTag === tag ? 'active' : ''}`}
-                onClick={() => setSearchParams({ tag })}
+                className={`tag-filter-btn ${!selectedTag ? 'active' : ''}`}
+                onClick={() => setSearchParams({})}
               >
-                {tag}
-                <span className="tag-count">{count}</span>
+                全部
               </button>
-            ))}
+              {allTags.map(({ tag, count }) => (
+                <button
+                  key={tag}
+                  className={`tag-filter-btn ${selectedTag === tag ? 'active' : ''}`}
+                  onClick={() => setSearchParams({ tag })}
+                >
+                  {tag}
+                  <span className="tag-count">{count}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          <button 
+          <button
             className="tags-expand-btn"
             onClick={() => setTagsExpanded(!tagsExpanded)}
           >
             {tagsExpanded ? '收起' : '展开'}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
         </div>

@@ -144,15 +144,25 @@ body.config-open .header {
 
 .tags-filter-list {
   flex: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-out;
+}
+
+.tags-filter-list-inner {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-height: 36px;
   overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 36px;
+  transition: max-height 0.3s ease-out;
 }
 
 .tags-filter.expanded .tags-filter-list {
+  grid-template-rows: 1fr;
+}
+
+.tags-filter.expanded .tags-filter-list-inner {
   max-height: 500px;
 }
 
