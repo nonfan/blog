@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { getPostBySlug } from '../utils/posts'
 import { useMobileMenu } from '../App'
 import { useConfig } from '../config/ConfigContext'
@@ -25,6 +25,7 @@ export default function PostDetail() {
   const { setToc, setActiveId, activeId } = useMobileMenu()
   const { config } = useConfig()
   const [showBackTop, setShowBackTop] = useState(false)
+  const tocNavRef = useRef<HTMLElement>(null)
 
   // 导出 PDF - 使用浏览器打印
   const handleExportPDF = useCallback(() => {
@@ -72,6 +73,27 @@ export default function PostDetail() {
     return () => setToc([])
   }, [toc, setToc])
 
+  // 当 activeId 变化时，滚动目录使当前项可见，并更新指示器位置
+  useEffect(() => {
+    if (!activeId || !tocNavRef.current) return
+    const activeLink = tocNavRef.current.querySelector(`a[href="#${CSS.escape(activeId)}"]`) as HTMLElement
+    const indicator = tocNavRef.current.querySelector('.toc-indicator') as HTMLElement
+    
+    if (activeLink && indicator) {
+      // 滚动到可见区域
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+      
+      // 更新指示器位置
+      const navRect = tocNavRef.current.getBoundingClientRect()
+      const linkRect = activeLink.getBoundingClientRect()
+      const top = linkRect.top - navRect.top + tocNavRef.current.scrollTop
+      
+      indicator.style.top = `${top}px`
+      indicator.style.height = `${linkRect.height}px`
+      indicator.style.opacity = '1'
+    }
+  }, [activeId])
+
   // 设置页面标题
   useEffect(() => {
     if (post) {
@@ -82,29 +104,71 @@ export default function PostDetail() {
     }
   }, [post, config.site.title])
 
-  // 监听滚动，更新当前活动的标题
+  // 监听滚动，更新当前活动的标题（参考 VitePress 实现）
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id)
-          }
+    let headings: { id: string; top: number }[] = []
+    
+    const getHeadingsTop = () => {
+      headings = Array.from(
+        document.querySelectorAll('.post-content h2, .post-content h3')
+      ).map(h => ({
+        id: h.id,
+        top: (h as HTMLElement).offsetTop
+      }))
+    }
+
+    const updateActiveHeading = () => {
+      if (headings.length === 0) return
+
+      const scrollY = window.scrollY
+      const innerHeight = window.innerHeight
+      const offsetHeight = document.body.offsetHeight
+      const isBottom = Math.abs(scrollY + innerHeight - offsetHeight) < 1
+
+      // 如果滚动到底部，激活最后一个标题
+      if (isBottom) {
+        setActiveId(headings[headings.length - 1].id)
+        return
+      }
+
+      // 找到当前滚动位置对应的标题
+      const offset = 100
+      for (let i = headings.length - 1; i >= 0; i--) {
+        if (scrollY >= headings[i].top - offset) {
+          setActiveId(headings[i].id)
+          return
         }
-      },
-      { rootMargin: '-100px 0px -80% 0px' }
-    )
+      }
+
+      // 默认激活第一个
+      if (headings.length > 0) {
+        setActiveId(headings[0].id)
+      }
+    }
+
+    const onScroll = () => {
+      updateActiveHeading()
+    }
 
     const timer = setTimeout(() => {
-      const headings = document.querySelectorAll('.post-content h2, .post-content h3')
-      headings.forEach(h => observer.observe(h))
-    }, 50)
+      getHeadingsTop()
+      updateActiveHeading()
+      window.addEventListener('scroll', onScroll, { passive: true })
+    }, 100)
+
+    // 窗口大小变化时重新计算标题位置
+    const onResize = () => {
+      getHeadingsTop()
+      updateActiveHeading()
+    }
+    window.addEventListener('resize', onResize, { passive: true })
 
     return () => {
       clearTimeout(timer)
-      observer.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
     }
-  }, [html])
+  }, [html, setActiveId])
 
   // 处理复制按钮点击 - 使用事件委托
   useEffect(() => {
@@ -190,11 +254,13 @@ export default function PostDetail() {
       {config.features.showToc && toc.length > 0 && (
         <aside className="post-toc">
           <div className="toc-title">页面导航</div>
-          <nav className="toc-nav">
-            {toc.map(item => (
+          <nav className="toc-nav" ref={tocNavRef}>
+            <div className="toc-indicator" />
+            {toc.map((item, index) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
+                data-index={index}
                 className={`toc-link ${item.level === 3 ? 'toc-link-sub' : ''} ${activeId === item.id ? 'active' : ''}`}
                 onClick={() => setActiveId(item.id)}
               >
@@ -202,17 +268,19 @@ export default function PostDetail() {
               </a>
             ))}
           </nav>
-          {showBackTop && (
-            <button
-              className="toc-back-top"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 15l-6-6-6 6" />
-              </svg>
-              回到顶部
-            </button>
-          )}
+          <div className="toc-back-top-wrapper">
+            {showBackTop && (
+              <button
+                className="toc-back-top"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 15l-6-6-6 6" />
+                </svg>
+                回到顶部
+              </button>
+            )}
+          </div>
         </aside>
       )}
     </div>
