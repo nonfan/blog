@@ -148,9 +148,7 @@ export function loadConfig(): BlogConfig {
         ...parsed,
         site: {
           ...defaultConfig.site,
-          ...parsed.site,
-          // logo 始终使用默认配置
-          logo: defaultConfig.site.logo,
+          // site 信息始终使用 blog.config.ts 中的配置
         },
         github: {
           ...defaultConfig.github,
