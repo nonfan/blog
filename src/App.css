@@ -105,25 +105,36 @@ body.config-open .header {
 }
 
 .masonry {
-  column-count: 4;
-  column-gap: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.masonry-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 @media (max-width: 1200px) {
   .masonry {
-    column-count: 3;
+    /* 3 columns handled by JS */
   }
 }
 
 @media (max-width: 900px) {
   .masonry {
-    column-count: 2;
+    /* 2 columns handled by JS */
   }
 }
 
 @media (max-width: 600px) {
   .masonry {
-    column-count: 1;
+    flex-direction: column;
+  }
+
+  .masonry-column {
+    width: 100%;
   }
 
   .search-bar,
@@ -279,8 +290,6 @@ body.config-open .header {
 
 /* 文章卡片 */
 .article-card {
-  break-inside: avoid;
-  margin-bottom: 20px;
   background: #fff;
   border: 1px solid #eee;
   border-radius: 12px;
