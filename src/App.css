@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-x: hidden;
 }
 
 /* 顶部栏 */
@@ -894,7 +893,6 @@ a.article-card {
   flex-shrink: 0;
   position: sticky;
   top: 100px;
-  align-self: flex-start;
   max-height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
