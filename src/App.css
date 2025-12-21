@@ -1678,6 +1678,24 @@ a.article-card {
   max-height: calc(85vh - 80px);
 }
 
+/* 设置面板滚动条 */
+.config-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.config-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.config-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.config-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
 .config-section {
   margin-bottom: 28px;
 }
@@ -1968,6 +1986,15 @@ a.article-card {
 .app.dark .config-close:hover {
   background: #333;
   color: #e5e5e5;
+}
+
+/* 深色模式滚动条 */
+.app.dark .config-content::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+.app.dark .config-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .app.dark .config-switches.config-card {
