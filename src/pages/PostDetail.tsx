@@ -238,7 +238,7 @@ export default function PostDetail() {
               </button>
             )}
           </div>
-          {config.features.showTags && post.tags.length > 0 && (
+          {!isArticle && config.features.showTags && post.tags.length > 0 && (
             <div className="post-meta">
               <div className="post-tags">
                 {post.tags.map(tag => (

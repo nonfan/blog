@@ -136,6 +136,16 @@ async function renderMarkdown(body) {
   const renderer = new marked.Renderer()
   const codeBlocks = []
 
+  // 带文字的分割线: ---文字---
+  renderer.paragraph = function({ text }) {
+    const dividerMatch = String(text).match(/^---(.+)---$/)
+    if (dividerMatch) {
+      const label = dividerMatch[1].trim()
+      return `<div class="divider-with-text"><span class="divider-text">${label}</span></div>`
+    }
+    return `<p>${text}</p>`
+  }
+
   renderer.heading = function({ text, depth }) {
     const baseId = generateId(String(text))
     const count = idCounts.get(baseId) || 0

@@ -2498,3 +2498,41 @@ a.article-card {
 .article-content .inline-code {
   text-indent: 0;
 }
+
+
+/* 带文字的分割线 */
+.divider-with-text {
+  display: flex;
+  align-items: center;
+  margin: 2em 0;
+  text-indent: 0;
+}
+
+.divider-with-text::before,
+.divider-with-text::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #d1d5db, transparent);
+}
+
+.divider-text {
+  padding: 0 1em;
+  font-size: 14px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.app.dark .divider-with-text::before,
+.app.dark .divider-with-text::after {
+  background: linear-gradient(to right, transparent, #4b5563, transparent);
+}
+
+.app.dark .divider-text {
+  color: #6b7280;
+}
+
+/* 文章样式下的分割线 */
+.article-content .divider-with-text {
+  margin: 2.5em 0;
+}
