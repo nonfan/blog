@@ -273,62 +273,50 @@ function AppContent() {
               )}
             </button>
 
-            {/* 菜单按钮 - 仅在文章页且有目录时显示 */}
+            {/* 目录按钮 */}
             {isPostPage && toc.length > 0 && (
               <button
-                className="mobile-menu-btn"
+                className={`toc-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="菜单"
+                aria-label="目录"
               >
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  {mobileMenuOpen ? (
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  ) : (
-                    <path d="M3 12h18M3 6h18M3 18h18" />
-                  )}
-                </svg>
+                <span className="toc-icon-bar"></span>
+                <span className="toc-icon-bar"></span>
+                <span className="toc-icon-bar"></span>
               </button>
             )}
           </div>
-        </header>
 
-        {/* 移动端侧边栏 - 仅显示目录 */}
-        {isPostPage && toc.length > 0 && (
-          <div className={`mobile-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
-            <div className="mobile-sidebar-content">
-              <div className="mobile-section">
-                <div className="mobile-section-title">页面导航</div>
-                <nav className="mobile-toc">
-                  {toc.map(item => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      className={`mobile-toc-link ${item.level > 2 ? `h${item.level}` : ''} ${activeId === item.id ? 'active' : ''}`}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleTocClick(item.id)
-                      }}
-                    >
-                      {item.text}
-                    </a>
-                  ))}
-                </nav>
+          {/* 目录下拉卡片 */}
+          {isPostPage && toc.length > 0 && (
+            <div className={`toc-dropdown-card ${mobileMenuOpen ? 'open' : ''}`}>
+              <button
+                className="toc-card-back-top"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+              >
+                返回顶部
+              </button>
+              <div className="toc-card-list">
+                {toc.map(item => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    className={`toc-card-link ${item.level > 2 ? `h${item.level}` : ''} ${activeId === item.id ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleTocClick(item.id)
+                    }}
+                  >
+                    {item.text}
+                  </a>
+                ))}
               </div>
             </div>
-          </div>
-        )}
-
-        {/* 遮罩层 */}
-        {mobileMenuOpen && (
-          <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)} />
-        )}
+          )}
+        </header>
 
         <Routes>
           <Route path="/" element={<Home searchQuery={searchQuery} />} />
