@@ -163,6 +163,23 @@ function AppContent() {
     setMobileMenuOpen(false)
   }, [location.pathname])
 
+  // 点击外部区域关闭目录
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      // 如果点击的是目录按钮或目录卡片内部，不关闭
+      if (target.closest('.toc-toggle-btn') || target.closest('.toc-dropdown-card')) {
+        return
+      }
+      setMobileMenuOpen(false)
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [mobileMenuOpen])
+
   const handleTocClick = (id: string) => {
     setMobileMenuOpen(false)
     setTimeout(() => {
