@@ -669,20 +669,12 @@ a.article-card {
 }
 
 .anchor-link {
-  position: absolute;
-  left: -20px;
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 400;
   opacity: 0;
+  margin-right: 0.25em;
   transition: opacity 0.2s;
-}
-
-/* 小屏幕隐藏锚点链接，避免溢出 */
-@media (max-width: 768px) {
-  .anchor-link {
-    display: none;
-  }
 }
 
 .heading-anchor:hover .anchor-link {
