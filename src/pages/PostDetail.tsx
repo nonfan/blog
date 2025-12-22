@@ -214,25 +214,29 @@ export default function PostDetail() {
     )
   }
 
+  const isArticle = post?.type === 'article'
+
   return (
-    <div className="post-layout">
+    <div className={`post-layout ${isArticle ? 'article-style' : ''}`}>
       <div className="post-detail">
         <article className="post-article">
           <div className="post-header">
             <h1 className="post-title">{post.title}</h1>
-            <button 
-              className="export-pdf-btn"
-              onClick={handleExportPDF} 
-              title="导出 PDF"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="18" x2="12" y2="12"/>
-                <polyline points="9 15 12 18 15 15"/>
-              </svg>
-              PDF
-            </button>
+            {!isArticle && (
+              <button 
+                className="export-pdf-btn"
+                onClick={handleExportPDF} 
+                title="导出 PDF"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <polyline points="9 15 12 18 15 15"/>
+                </svg>
+                PDF
+              </button>
+            )}
           </div>
           {config.features.showTags && post.tags.length > 0 && (
             <div className="post-meta">
@@ -245,7 +249,7 @@ export default function PostDetail() {
           )}
 
           <div 
-            className="post-content" 
+            className={`post-content ${isArticle ? 'article-content' : ''}`}
             dangerouslySetInnerHTML={{ __html: html }} 
           />
 
@@ -254,7 +258,7 @@ export default function PostDetail() {
         </article>
       </div>
 
-      {config.features.showToc && toc.length > 0 && (
+      {!isArticle && config.features.showToc && toc.length > 0 && (
         <aside className="post-toc">
           <div className="toc-title">页面导航</div>
           <nav className="toc-nav" ref={tocNavRef}>

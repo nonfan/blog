@@ -2417,3 +2417,69 @@ a.article-card {
     break-inside: avoid;
   }
 }
+
+
+/* 文章/散文样式 */
+.article-style {
+  max-width: 800px;
+}
+
+.article-style .post-detail {
+  max-width: 100%;
+}
+
+.article-content {
+  font-size: 17px;
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+
+.article-content p {
+  text-indent: 2em;
+  margin-bottom: 1.5em;
+}
+
+/* 文章样式下隐藏标题锚点 */
+.article-content .anchor-link {
+  display: none;
+}
+
+/* 文章样式下的标题 */
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+  text-indent: 0;
+  margin-top: 2em;
+}
+
+/* 文章样式下的引用 */
+.article-content blockquote {
+  text-indent: 0;
+  font-style: italic;
+  border-left-width: 3px;
+  padding-left: 1.5em;
+  margin: 1.5em 0;
+}
+
+.article-content blockquote p {
+  text-indent: 0;
+}
+
+/* 文章样式下的列表不缩进 */
+.article-content ul,
+.article-content ol {
+  text-indent: 0;
+}
+
+.article-content li {
+  text-indent: 0;
+}
+
+/* 文章样式下简化代码块 */
+.article-content .code-block-wrapper {
+  margin: 1.5em 0;
+}
+
+.article-content .inline-code {
+  text-indent: 0;
+}

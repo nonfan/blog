@@ -52,6 +52,9 @@ function parseFrontmatter(content) {
 
     const descMatch = line.match(/^description:\s*(.+)$/)
     if (descMatch) frontmatter.description = descMatch[1].trim()
+
+    const typeMatch = line.match(/^type:\s*(.+)$/)
+    if (typeMatch) frontmatter.type = typeMatch[1].trim()
   })
 
   const tagsMatch = yamlStr.match(/tags:\n((?:\s+-\s+.+\n?)+)/)
@@ -252,7 +255,8 @@ async function main() {
       logo: frontmatter.logo,
       date,
       excerpt,
-      pinned: frontmatter.pinned || false
+      pinned: frontmatter.pinned || false,
+      type: frontmatter.type || 'tech'  // 默认为技术文章
     })
   }
 
