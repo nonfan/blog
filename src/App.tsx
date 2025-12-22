@@ -344,9 +344,11 @@ function AppContent() {
         {isHome && <Footer />}
 
         {/* 右下角浮动按钮 */}
-        <div className="floating-buttons">
-          <ConfigPanel />
-        </div>
+        {config.features.showConfigButton && (
+          <div className="floating-buttons">
+            <ConfigPanel />
+          </div>
+        )}
       </div>
     </MobileMenuContext.Provider>
   )

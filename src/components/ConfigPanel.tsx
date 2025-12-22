@@ -172,6 +172,15 @@ export default function ConfigPanel() {
                     />
                     <span className="switch-slider" />
                   </label>
+                  <label className="config-switch">
+                    <span>阅读进度条</span>
+                    <input
+                      type="checkbox"
+                      checked={config.features.showReadingProgress}
+                      onChange={e => updateFeature('showReadingProgress', e.target.checked)}
+                    />
+                    <span className="switch-slider" />
+                  </label>
                 </div>
               </div>
 

@@ -25,6 +25,8 @@ export interface BlogConfig {
     showSplashOnce: boolean // 开屏动画只显示一次
     disableSplash: boolean // 永久关闭开屏动画
     showFooter: boolean // 显示页脚
+    showConfigButton: boolean // 显示设置按钮
+    showReadingProgress: boolean // 显示阅读进度条
   }
 
   // GitHub 配置
@@ -91,6 +93,8 @@ export const defaultConfig: BlogConfig = {
     showSplashOnce: blogConfig.features?.showSplashOnce ?? false,
     disableSplash: blogConfig.features?.disableSplash ?? false,
     showFooter: blogConfig.features?.showFooter ?? true,
+    showConfigButton: blogConfig.features?.showConfigButton ?? true,
+    showReadingProgress: blogConfig.features?.showReadingProgress ?? true,
   },
   github: {
     repo: normalizeRepo(blogConfig.github?.repo),

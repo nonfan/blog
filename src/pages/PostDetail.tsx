@@ -25,6 +25,7 @@ export default function PostDetail() {
   const { setToc, setActiveId, activeId } = useMobileMenu()
   const { config } = useConfig()
   const [showBackTop, setShowBackTop] = useState(false)
+  const [readingProgress, setReadingProgress] = useState(0)
   const tocNavRef = useRef<HTMLElement>(null)
 
   // 导出 PDF - 使用浏览器打印
@@ -32,10 +33,16 @@ export default function PostDetail() {
     window.print()
   }, [])
 
-  // 监听滚动显示回到顶部
+  // 监听滚动显示回到顶部 + 计算阅读进度
   useEffect(() => {
     const handleScroll = () => {
       setShowBackTop(window.scrollY > 300)
+      
+      // 计算阅读进度
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0
+      setReadingProgress(progress)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
@@ -217,7 +224,13 @@ export default function PostDetail() {
   const isArticle = post?.type === 'article'
 
   return (
-    <div className={`post-layout ${isArticle ? 'article-style' : ''}`}>
+    <>
+      {/* 阅读进度条 */}
+      {config.features.showReadingProgress && (
+        <div className="reading-progress-bar" style={{ width: `${readingProgress}%` }} />
+      )}
+      
+      <div className={`post-layout ${isArticle ? 'article-style' : ''}`}>
       <div className="post-detail">
         <article className="post-article">
           <div className="post-header">
@@ -291,5 +304,6 @@ export default function PostDetail() {
         </aside>
       )}
     </div>
+    </>
   )
 }

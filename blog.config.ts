@@ -36,6 +36,8 @@ export default {
     showSplashOnce: false, // 开屏动画只显示一次（默认每次刷新都显示）
     disableSplash: false, // 永久关闭开屏动画
     showFooter: true, // 显示页脚
+    showConfigButton: true, // 显示设置按钮
+    showReadingProgress: true, // 显示阅读进度条
   },
 
   // 页脚配置

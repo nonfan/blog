@@ -522,17 +522,20 @@ a.article-card {
 .post-layout {
   display: flex;
   flex: 1;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px;
   padding-top: 100px;
   padding-bottom: 200px;
   gap: 60px;
+  box-sizing: border-box;
 }
 
 .post-detail {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
 }
 
 .back-link {
@@ -655,6 +658,8 @@ a.article-card {
   color: #333;
   overflow-wrap: break-word;
   word-break: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* 标题锚点 */
@@ -2535,4 +2540,23 @@ a.article-card {
 /* 文章样式下的分割线 */
 .article-content .divider-with-text {
   margin: 2.5em 0;
+}
+
+
+/* 阅读进度条 */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light, var(--color-primary)));
+  z-index: 1000;
+  transition: width 0.1s ease-out;
+  border-radius: 0 2px 2px 0;
+}
+
+@media print {
+  .reading-progress-bar {
+    display: none;
+  }
 }

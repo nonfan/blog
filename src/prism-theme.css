@@ -6,6 +6,7 @@
   overflow: hidden;
   background: #fff;
   border: 1px solid #e5e7eb;
+  max-width: 100%;
 }
 
 /* 代码块头部 */
