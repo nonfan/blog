@@ -1499,7 +1499,7 @@ a.article-card {
 
 @media (max-width: 600px) {
   .header {
-    padding: 12px 16px;
+    padding: 12px 24px;
   }
 
   .post-layout {
