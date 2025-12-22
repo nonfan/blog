@@ -2428,6 +2428,20 @@ a.article-card {
   max-width: 100%;
 }
 
+/* 文章样式标题居中 */
+.article-style .post-header {
+  justify-content: center;
+}
+
+.article-style .post-title {
+  text-align: center;
+}
+
+/* 文章样式标签居中 */
+.article-style .post-meta {
+  justify-content: center;
+}
+
 .article-content {
   font-size: 17px;
   line-height: 2;
