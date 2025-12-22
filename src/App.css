@@ -678,6 +678,13 @@ a.article-card {
   transition: opacity 0.2s;
 }
 
+/* 小屏幕隐藏锚点链接，避免溢出 */
+@media (max-width: 768px) {
+  .anchor-link {
+    display: none;
+  }
+}
+
 .heading-anchor:hover .anchor-link {
   opacity: 1;
 }
