@@ -1247,6 +1247,7 @@ a.article-card {
   width: 40px;
   height: 40px;
   padding: 0;
+  margin-right: -8px;
   background: transparent;
   border: none;
   border-radius: 8px;
