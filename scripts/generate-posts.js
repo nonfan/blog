@@ -57,7 +57,7 @@ function parseFrontmatter(content) {
     if (typeMatch) frontmatter.type = typeMatch[1].trim()
   })
 
-  const tagsMatch = yamlStr.match(/tags:\n((?:\s+-\s+.+\n?)+)/)
+  const tagsMatch = yamlStr.match(/tags:\s*\n((?:\s+-\s+.+\n?)+)/)
   if (tagsMatch) {
     frontmatter.tags = tagsMatch[1]
       .split('\n')
