@@ -1169,6 +1169,23 @@ a.article-card {
   .post-toc {
     display: none;
   }
+
+  /* 中等屏幕隐藏桌面端主题切换，显示移动端按钮 */
+  .desktop-only {
+    display: none !important;
+  }
+
+  .header-actions.mobile-only {
+    display: flex !important;
+  }
+
+  .mobile-sidebar {
+    display: block;
+  }
+
+  .mobile-overlay {
+    display: block;
+  }
 }
 
 /* 移动端 header 按钮组 */
