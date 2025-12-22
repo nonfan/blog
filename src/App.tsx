@@ -310,7 +310,7 @@ function AppContent() {
                     <a
                       key={item.id}
                       href={`#${item.id}`}
-                      className={`mobile-toc-link ${item.level === 3 ? 'sub' : ''} ${activeId === item.id ? 'active' : ''}`}
+                      className={`mobile-toc-link ${item.level > 2 ? `h${item.level}` : ''} ${activeId === item.id ? 'active' : ''}`}
                       onClick={(e) => {
                         e.preventDefault()
                         handleTocClick(item.id)

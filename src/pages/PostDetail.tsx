@@ -52,10 +52,13 @@ export default function PostDetail() {
     )
   }, [slug])
 
-  // 从 HTML 中提取目录
+  // 从 HTML 中提取目录（根据配置的最大层级）
   const toc = useMemo(() => {
     const items: TocItem[] = []
-    const regex = /<h([23])\s+id="([^"]+)"[^>]*>.*?#<\/a>([^<]+)<\/h[23]>/g
+    const maxLevel = config.features.tocMaxLevel
+    // 动态生成正则，匹配 h2 到 h{maxLevel}
+    const levels = Array.from({ length: maxLevel - 1 }, (_, i) => i + 2).join('')
+    const regex = new RegExp(`<h([${levels}])\\s+id="([^"]+)"[^>]*>.*?#<\\/a>([^<]+)<\\/h[${levels}]>`, 'g')
     let match
     while ((match = regex.exec(html)) !== null) {
       items.push({
@@ -65,7 +68,7 @@ export default function PostDetail() {
       })
     }
     return items
-  }, [html])
+  }, [html, config.features.tocMaxLevel])
 
   // 同步目录到移动端菜单
   useEffect(() => {
@@ -261,7 +264,7 @@ export default function PostDetail() {
                 key={item.id}
                 href={`#${item.id}`}
                 data-index={index}
-                className={`toc-link ${item.level === 3 ? 'toc-link-sub' : ''} ${activeId === item.id ? 'active' : ''}`}
+                className={`toc-link ${item.level > 2 ? `toc-link-h${item.level}` : ''} ${activeId === item.id ? 'active' : ''}`}
                 onClick={() => setActiveId(item.id)}
               >
                 {item.text}

@@ -974,8 +974,20 @@ a.article-card {
   font-weight: 500;
 }
 
-.toc-link-sub {
-  padding-left: 32px;
+.toc-link-h3 {
+  padding-left: 28px;
+}
+
+.toc-link-h4 {
+  padding-left: 40px;
+}
+
+.toc-link-h5 {
+  padding-left: 52px;
+}
+
+.toc-link-h6 {
+  padding-left: 64px;
 }
 
 /* 目录底部回到顶部 */
@@ -1343,13 +1355,34 @@ a.article-card {
   font-weight: 500;
 }
 
-.mobile-toc-link.sub {
+.mobile-toc-link.h3 {
   padding-left: 12px;
   font-size: 13px;
   color: #888;
 }
 
-.mobile-toc-link.sub.active {
+.mobile-toc-link.h4 {
+  padding-left: 24px;
+  font-size: 13px;
+  color: #888;
+}
+
+.mobile-toc-link.h5 {
+  padding-left: 36px;
+  font-size: 12px;
+  color: #888;
+}
+
+.mobile-toc-link.h6 {
+  padding-left: 48px;
+  font-size: 12px;
+  color: #888;
+}
+
+.mobile-toc-link.h3.active,
+.mobile-toc-link.h4.active,
+.mobile-toc-link.h5.active,
+.mobile-toc-link.h6.active {
   color: var(--color-primary);
 }
 
@@ -1365,11 +1398,17 @@ a.article-card {
   color: var(--color-primary-light);
 }
 
-.app.dark .mobile-toc-link.sub {
+.app.dark .mobile-toc-link.h3,
+.app.dark .mobile-toc-link.h4,
+.app.dark .mobile-toc-link.h5,
+.app.dark .mobile-toc-link.h6 {
   color: #777;
 }
 
-.app.dark .mobile-toc-link.sub.active {
+.app.dark .mobile-toc-link.h3.active,
+.app.dark .mobile-toc-link.h4.active,
+.app.dark .mobile-toc-link.h5.active,
+.app.dark .mobile-toc-link.h6.active {
   color: var(--color-primary-light);
 }
 

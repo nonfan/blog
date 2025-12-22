@@ -20,6 +20,7 @@ export interface BlogConfig {
     showEditLink: boolean // 显示 GitHub 编辑链接
     showLastUpdated: boolean // 显示最后更新时间
     showToc: boolean // 显示目录
+    tocMaxLevel: number // 目录最大层级（2-6）
     showTags: boolean // 显示标签
     showSplashOnce: boolean // 开屏动画只显示一次
     disableSplash: boolean // 永久关闭开屏动画
@@ -85,6 +86,7 @@ export const defaultConfig: BlogConfig = {
     showEditLink: blogConfig.features?.showEditLink ?? true,
     showLastUpdated: blogConfig.features?.showLastUpdated ?? true,
     showToc: blogConfig.features?.showToc ?? true,
+    tocMaxLevel: Math.min(6, Math.max(2, blogConfig.features?.tocMaxLevel ?? 3)),
     showTags: blogConfig.features?.showTags ?? true,
     showSplashOnce: blogConfig.features?.showSplashOnce ?? false,
     disableSplash: blogConfig.features?.disableSplash ?? false,

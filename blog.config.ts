@@ -21,7 +21,7 @@ export default {
 
   // 默认主题色
   theme: {
-    primaryColor: '#3b82f6', // 蓝色
+    primaryColor: '#f97316',
     // 可选: '#8b5cf6' 紫色, '#ec4899' 粉色, '#ef4444' 红色,
     //       '#f97316' 橙色, '#22c55e' 绿色, '#06b6d4' 青色
   },
@@ -31,6 +31,7 @@ export default {
     showEditLink: true, // 显示 GitHub 编辑链接
     showLastUpdated: true, // 显示最后更新时间
     showToc: true, // 显示目录
+    tocMaxLevel: 3, // 目录最大层级（2-6，默认3表示显示h2和h3）
     showTags: true, // 显示标签
     showSplashOnce: false, // 开屏动画只显示一次（默认每次刷新都显示）
     disableSplash: false, // 永久关闭开屏动画
