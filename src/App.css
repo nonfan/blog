@@ -2656,9 +2656,4 @@ a.article-card {
 /* 文章内图片可点击样式 */
 .post-content img {
   cursor: zoom-in;
-  transition: opacity 0.2s;
-}
-
-.post-content img:hover {
-  opacity: 0.9;
 }

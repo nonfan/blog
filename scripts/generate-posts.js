@@ -142,30 +142,31 @@ function generateId(text) {
     || 'heading'
 }
 
-async function renderMarkdown(body) {
-  const idCounts = new Map()
-  const renderer = new marked.Renderer()
-  const codeBlocks = []
+// 全局变量，用于在 renderer 中共享状态
+let currentIdCounts = new Map()
+let currentCodeBlocks = []
 
+// 配置 marked renderer
+const renderer = {
   // 带文字的分割线: ---文字---
-  renderer.paragraph = function({ text }) {
+  paragraph(text) {
     const dividerMatch = String(text).match(/^---(.+)---$/)
     if (dividerMatch) {
       const label = dividerMatch[1].trim()
       return `<div class="divider-with-text"><span class="divider-text">${label}</span></div>`
     }
     return `<p>${text}</p>`
-  }
+  },
 
-  renderer.heading = function({ text, depth }) {
+  heading(text, depth) {
     const baseId = generateId(String(text))
-    const count = idCounts.get(baseId) || 0
-    idCounts.set(baseId, count + 1)
+    const count = currentIdCounts.get(baseId) || 0
+    currentIdCounts.set(baseId, count + 1)
     const id = count === 0 ? baseId : `${baseId}-${count}`
     return `<h${depth} id="${id}" class="heading-anchor"><a href="#${id}" class="anchor-link">#</a>${text}</h${depth}>`
-  }
+  },
 
-  renderer.code = function({ text, lang }) {
+  code(code, lang) {
     let language = lang || 'text'
     let title = ''
     
@@ -178,34 +179,41 @@ async function renderMarkdown(body) {
     }
     
     const placeholder = `<!--CODE_BLOCK_${Math.random().toString(36).slice(2)}-->`
-    codeBlocks.push({ placeholder, code: text, lang: language, title })
+    currentCodeBlocks.push({ placeholder, code, lang: language, title })
     return placeholder
-  }
+  },
 
-  renderer.codespan = function({ text }) {
+  codespan(text) {
     return `<code class="inline-code">${text}</code>`
-  }
+  },
 
   // 外部链接在新标签页打开
-  renderer.link = function({ href, title, text }) {
+  link(href, title, text) {
     const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'))
     const titleAttr = title ? ` title="${title}"` : ''
     if (isExternal) {
       return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`
     }
     return `<a href="${href}"${titleAttr}>${text}</a>`
-  }
+  },
 
   // 图片懒加载
-  renderer.image = function({ href, title, text }) {
+  image(href, title, text) {
     const titleAttr = title ? ` title="${title}"` : ''
     return `<img src="${href}" alt="${text || ''}"${titleAttr} loading="lazy" />`
   }
+}
 
-  marked.setOptions({ renderer })
+marked.use({ renderer })
+
+async function renderMarkdown(body) {
+  // 重置状态
+  currentIdCounts = new Map()
+  currentCodeBlocks = []
+
   let html = marked.parse(body)
   
-  for (const block of codeBlocks) {
+  for (const block of currentCodeBlocks) {
     try {
       const lightHtml = await codeToHtml(block.code, { lang: block.lang, theme: 'one-light' })
       const darkHtml = await codeToHtml(block.code, { lang: block.lang, theme: 'one-dark-pro' })
