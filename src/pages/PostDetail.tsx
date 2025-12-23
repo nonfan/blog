@@ -5,6 +5,7 @@ import { useMobileMenu } from '../App'
 import { useConfig } from '../config/ConfigContext'
 import { baseUrl } from '../config'
 import PostFooter from '../components/PostFooter'
+import Lightbox from '../components/Lightbox'
 
 interface TocItem {
   id: string
@@ -26,6 +27,7 @@ export default function PostDetail() {
   const { config } = useConfig()
   const [showBackTop, setShowBackTop] = useState(false)
   const [readingProgress, setReadingProgress] = useState(0)
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null)
   const tocNavRef = useRef<HTMLElement>(null)
 
   // 导出 PDF - 使用浏览器打印
@@ -202,6 +204,19 @@ export default function PostDetail() {
     return () => document.removeEventListener('click', handleClick)
   }, [])
 
+  // 处理图片点击 - 打开灯箱
+  useEffect(() => {
+    const handleImageClick = (e: MouseEvent) => {
+      const img = e.target as HTMLImageElement
+      if (img.tagName === 'IMG' && img.closest('.post-content')) {
+        setLightboxImage({ src: img.src, alt: img.alt || '' })
+      }
+    }
+
+    document.addEventListener('click', handleImageClick)
+    return () => document.removeEventListener('click', handleImageClick)
+  }, [])
+
   if (!post) {
     return (
       <div className="post-not-found">
@@ -304,6 +319,15 @@ export default function PostDetail() {
         </aside>
       )}
     </div>
+
+      {/* 图片灯箱 */}
+      {lightboxImage && (
+        <Lightbox
+          src={lightboxImage.src}
+          alt={lightboxImage.alt}
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
     </>
   )
 }
