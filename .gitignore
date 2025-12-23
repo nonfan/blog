@@ -15,6 +15,9 @@ dist-ssr
 # Generated files
 src/generated
 
+# Test coverage
+coverage
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
