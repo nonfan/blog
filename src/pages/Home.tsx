@@ -66,7 +66,23 @@ export default function Home({ searchQuery }: HomeProps) {
   // 支持多关键词搜索（空格分隔），匹配任意关键词即可
   const keywords = searchQuery.toLowerCase().split(/\s+/).filter(k => k.length > 0)
 
-  // 先按标签筛选，再按关键词搜索
+  // 从内容中提取匹配关键词的上下文片段
+  const getContextSnippet = (content: string, keyword: string, contextLength = 60): string | null => {
+    const lowerContent = content.toLowerCase()
+    const index = lowerContent.indexOf(keyword.toLowerCase())
+    if (index === -1) return null
+    
+    const start = Math.max(0, index - contextLength)
+    const end = Math.min(content.length, index + keyword.length + contextLength)
+    
+    let snippet = content.slice(start, end)
+    if (start > 0) snippet = '...' + snippet
+    if (end < content.length) snippet = snippet + '...'
+    
+    return snippet
+  }
+
+  // 先按标签筛选，再按关键词搜索（包含全文搜索）
   const filteredPosts = useMemo(() => {
     let result = posts
     
@@ -75,16 +91,40 @@ export default function Home({ searchQuery }: HomeProps) {
       result = result.filter(post => post.tags.includes(selectedTag))
     }
     
-    // 关键词搜索
+    // 关键词搜索（包含全文搜索）
     if (keywords.length > 0) {
       result = result.filter(post => {
-        const searchText = `${post.title} ${post.tags.join(' ')} ${post.excerpt}`.toLowerCase()
-        return keywords.some(keyword => searchText.includes(keyword))
+        const basicText = `${post.title} ${post.tags.join(' ')} ${post.excerpt}`.toLowerCase()
+        const contentText = (post.content || '').toLowerCase()
+        return keywords.some(keyword => 
+          basicText.includes(keyword) || contentText.includes(keyword)
+        )
       })
     }
     
     return result
   }, [selectedTag, keywords])
+
+  // 获取文章显示的摘要（如果搜索匹配在内容中，显示上下文片段）
+  const getDisplayExcerpt = (post: Post): string => {
+    if (keywords.length === 0) return post.excerpt
+    
+    // 检查是否在基本信息中匹配
+    const basicText = `${post.title} ${post.tags.join(' ')} ${post.excerpt}`.toLowerCase()
+    const matchInBasic = keywords.some(k => basicText.includes(k))
+    
+    if (matchInBasic) return post.excerpt
+    
+    // 在内容中查找匹配的上下文
+    if (post.content) {
+      for (const keyword of keywords) {
+        const snippet = getContextSnippet(post.content, keyword)
+        if (snippet) return snippet
+      }
+    }
+    
+    return post.excerpt
+  }
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('zh-CN', {
@@ -206,7 +246,7 @@ export default function Home({ searchQuery }: HomeProps) {
                     </div>
                   </div>
                 </div>
-                <div className="card-content">{highlightText(post.excerpt)}</div>
+                <div className="card-content">{highlightText(getDisplayExcerpt(post))}</div>
                 <div className="card-footer">
                   {post.pinned && (
                     <span className="pinned-badge">

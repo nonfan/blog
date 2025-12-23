@@ -77,15 +77,26 @@ function getTitleFromBody(body) {
 
 function cleanText(text) {
   return text
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/\|.*\|/g, '')
-    .replace(/`[^`]+`/g, '')
-    .replace(/^[-*+]\s+/gm, '')
-    .replace(/^\d+\.\s+/gm, '')
-    .replace(/^>\s*/gm, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\n+/g, ' ')
+    .replace(/```[\s\S]*?```/g, '')           // 代码块
+    .replace(/\|.*\|/g, '')                    // 表格
+    .replace(/`[^`]+`/g, '')                   // 行内代码
+    .replace(/^#{1,6}\s+/gm, '')               // 标题标记
+    .replace(/^[-*+]\s+/gm, '')                // 无序列表
+    .replace(/^\d+\.\s+/gm, '')                // 有序列表
+    .replace(/^>\s*/gm, '')                    // 引用
+    .replace(/!\[.*?\]\(.*?\)/g, '')           // 图片
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')   // 链接，保留文字
+    .replace(/\[\^[^\]]+\]/g, '')              // 脚注引用 [^note]
+    .replace(/\[\^[^\]]+\]:.*/g, '')           // 脚注定义
+    .replace(/<[^>]+>/g, '')                   // HTML 标签
+    .replace(/\*\*([^*]+)\*\*/g, '$1')         // 粗体
+    .replace(/\*([^*]+)\*/g, '$1')             // 斜体
+    .replace(/__([^_]+)__/g, '$1')             // 粗体
+    .replace(/_([^_]+)_/g, '$1')               // 斜体
+    .replace(/~~([^~]+)~~/g, '$1')             // 删除线
+    .replace(/^---.*$/gm, '')                  // 分割线
+    .replace(/\n+/g, ' ')                      // 多个换行变空格
+    .replace(/\s+/g, ' ')                      // 多个空格变一个
     .trim()
 }
 
@@ -258,6 +269,9 @@ async function main() {
 
     const excerpt = frontmatter.description || getExcerpt(body)
 
+    // 提取纯文本内容用于全文搜索（限制长度避免文件过大）
+    const searchContent = cleanText(body).slice(0, 3000)
+
     posts.push({
       slug,
       title,
@@ -265,6 +279,7 @@ async function main() {
       logo: frontmatter.logo,
       date,
       excerpt,
+      content: searchContent, // 用于全文搜索
       pinned: frontmatter.pinned || false,
       type: frontmatter.type || 'tech'  // 默认为技术文章
     })
