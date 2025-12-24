@@ -803,6 +803,48 @@ a.article-card {
   background: #e9ebee;
 }
 
+/* 脚注样式 */
+.post-content .footnotes {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.post-content .footnotes hr {
+  display: none;
+}
+
+.post-content .footnotes ol {
+  padding-left: 20px;
+}
+
+.post-content .footnotes li {
+  margin: 8px 0;
+}
+
+.post-content .footnotes li p {
+  margin: 0;
+  display: inline;
+}
+
+.post-content sup a[data-footnote-ref] {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.post-content sup a[data-footnote-ref]:hover {
+  text-decoration: underline;
+}
+
+.post-content a[data-footnote-backref] {
+  color: var(--color-primary);
+  text-decoration: none;
+  margin-left: 4px;
+}
+
 /* 列表样式 */
 .post-content ul,
 .post-content ol {
@@ -902,6 +944,11 @@ a.article-card {
 .app.dark .post-content blockquote blockquote {
   background: rgba(255, 255, 255, 0.03);
   border-left-color: #6b7280;
+}
+
+.app.dark .post-content .footnotes {
+  border-top-color: #3a3a3a;
+  color: #9ca3af;
 }
 
 .app.dark .post-content li::marker {

@@ -4,6 +4,10 @@ import { join } from 'path'
 import { marked } from 'marked'
 import { codeToHtml } from 'shiki'
 import katex from 'katex'
+import markedFootnote from 'marked-footnote'
+
+// 配置 marked 使用脚注扩展
+marked.use(markedFootnote())
 
 const postsDir = './posts'
 const outputFile = './src/generated/posts.json'
