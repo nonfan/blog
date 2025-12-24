@@ -822,6 +822,7 @@ a.article-card {
 
 .post-content .footnotes li {
   margin: 8px 0;
+  scroll-margin-top: 80px;
 }
 
 .post-content .footnotes li p {
@@ -833,6 +834,7 @@ a.article-card {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
+  scroll-margin-top: 80px;
 }
 
 .post-content sup a[data-footnote-ref]:hover {
