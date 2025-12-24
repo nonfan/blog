@@ -105,6 +105,12 @@ pinned: false
 
 ### 链接
 
+```markdown
+[访问 GitHub](https://github.com)
+[带标题的链接](https://github.com "GitHub 官网")
+https://example.com
+```
+
 [访问 GitHub](https://github.com) - 行内链接
 
 [带标题的链接](https://github.com "GitHub 官网")
@@ -113,11 +119,24 @@ pinned: false
 
 ### 图片
 
+```markdown
+![替代文本](图片URL)
+![Vite Logo](https://vitejs.dev/logo.svg)
+```
+
 ![Vite Logo](https://vitejs.dev/logo.svg)
 
 ## 列表
 
 ### 无序列表
+
+```markdown
+- 第一项
+- 第二项
+  - 嵌套项 A
+  - 嵌套项 B
+- 第三项
+```
 
 - 第一项
 - 第二项
@@ -127,6 +146,14 @@ pinned: false
 
 ### 有序列表
 
+```markdown
+1. 第一步
+2. 第二步
+   1. 子步骤 2.1
+   2. 子步骤 2.2
+3. 第三步
+```
+
 1. 第一步
 2. 第二步
    1. 子步骤 2.1
@@ -135,12 +162,26 @@ pinned: false
 
 ### 任务列表
 
+```markdown
+- [x] 已完成的任务
+- [ ] 待完成的任务
+```
+
 - [x] 已完成的任务
 - [x] 另一个完成的任务
 - [ ] 待完成的任务
 - [ ] 还没做的事情
 
 ## 引用
+
+```markdown
+> 这是一段引用文本。
+>
+> 引用可以包含多个段落。
+
+> 嵌套引用
+>> 这是嵌套的引用
+```
 
 > 这是一段引用文本。引用可以用来强调重要内容或引用他人的话。
 >
@@ -153,6 +194,10 @@ pinned: false
 ## 代码
 
 ### 行内代码
+
+```markdown
+使用 `const` 声明常量
+```
 
 使用 `const` 声明常量，使用 `let` 声明变量。调用 `console.log()` 输出日志。
 
@@ -317,6 +362,13 @@ pnpm add vite
 
 ## 表格
 
+```markdown
+| 功能 | 语法 | 示例 |
+|------|------|------|
+| 粗体 | `**text**` | **粗体** |
+| 斜体 | `*text*` | *斜体* |
+```
+
 | 功能 | 语法 | 示例 |
 |------|------|------|
 | 粗体 | `**text**` | **粗体** |
@@ -325,6 +377,12 @@ pnpm add vite
 | 链接 | `[text](url)` | [链接](/) |
 
 ### 对齐方式
+
+```markdown
+| 左对齐 | 居中对齐 | 右对齐 |
+|:-------|:--------:|-------:|
+| 内容 | 内容 | 内容 |
+```
 
 | 左对齐 | 居中对齐 | 右对齐 |
 |:-------|:--------:|-------:|
@@ -417,6 +475,10 @@ pnpm add vite
 
 ## 分隔线
 
+```markdown
+---
+```
+
 使用三个或更多的 `-`、`*` 或 `_` 创建分隔线：
 
 ---
@@ -424,6 +486,10 @@ pnpm add vite
 上面是一条分隔线。
 
 ### 带文字的分隔线
+
+```markdown
+---示例分隔线---
+```
 
 使用 `---文字---` 格式创建带文字的分隔线：
 
@@ -443,6 +509,15 @@ pnpm add vite
 
 ## 脚注
 
+```markdown
+这是一个带脚注的句子[^1]。
+
+这是另一个脚注[^note]。
+
+[^1]: 这是脚注的内容。
+[^note]: 脚注可以使用任意标识符。
+```
+
 这是一个带脚注的句子[^1]。
 
 这是另一个脚注[^note]。
@@ -453,6 +528,17 @@ pnpm add vite
 ## HTML 标签
 
 Markdown 支持内嵌 HTML：
+
+```html
+<details>
+<summary>点击展开详情</summary>
+隐藏的内容
+</details>
+
+<kbd>Ctrl</kbd> + <kbd>C</kbd>
+
+<mark>高亮文本</mark>
+```
 
 <details>
 <summary>点击展开详情</summary>
@@ -470,9 +556,23 @@ Markdown 支持内嵌 HTML：
 
 ## 数学公式
 
+支持 KaTeX 数学公式渲染。
+
+### 行内公式
+
+```markdown
+行内公式：$E = mc^2$
+```
+
 行内公式：$E = mc^2$
 
-块级公式：
+### 块级公式
+
+````markdown
+$$
+\frac{n!}{k!(n-k)!} = \binom{n}{k}
+$$
+````
 
 $$
 \frac{n!}{k!(n-k)!} = \binom{n}{k}
@@ -490,3 +590,5 @@ $$
 - 支持带文字的分隔线
 - 支持技术文章和散文两种类型
 - 支持 VitePress 风格自定义容器（info/tip/warning/danger/details）
+- 支持 KaTeX 数学公式
+- 支持脚注
