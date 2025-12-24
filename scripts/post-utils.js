@@ -232,7 +232,9 @@ export function preprocessContainers(body) {
 
 ${innerContent}
 
-</details>`
+</details>
+
+`
     }
     
     return `<div class="custom-block ${type}">
@@ -240,7 +242,9 @@ ${innerContent}
 
 ${innerContent}
 
-</div>`
+</div>
+
+`
   })
 }
 
