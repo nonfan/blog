@@ -2792,21 +2792,59 @@ a.article-card {
   margin: 16px 0;
   border-radius: 8px;
   overflow: hidden;
+  background: #fafafa;
   border: 1px solid #e5e7eb;
+}
+
+/* 代码组头部 - 和普通代码块一致 */
+.code-group-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.code-group-header .code-dots {
+  display: flex;
+  gap: 6px;
+  margin-right: 12px;
+}
+
+.code-group-header .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.code-group-header .dot.red {
+  background: #ff5f56;
+}
+
+.code-group-header .dot.yellow {
+  background: #ffbd2e;
+}
+
+.code-group-header .dot.green {
+  background: #27c93f;
 }
 
 .code-group-tabs {
   display: flex;
-  background: #f3f4f6;
-  border-bottom: 1px solid #e5e7eb;
+  flex: 1;
+  gap: 4px;
   overflow-x: auto;
 }
 
+.code-group-tabs::-webkit-scrollbar {
+  height: 0;
+}
+
 .code-group-tab {
-  padding: 10px 16px;
+  padding: 6px 14px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   color: #6b7280;
@@ -2817,13 +2855,12 @@ a.article-card {
 
 .code-group-tab:hover {
   color: #374151;
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .code-group-tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  background: #fff;
+  color: #374151;
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .code-group-panels {
@@ -2848,10 +2885,10 @@ a.article-card {
   right: 12px;
   z-index: 10;
   padding: 6px;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   border: none;
   border-radius: 4px;
-  color: #6b7280;
+  color: #9ca3af;
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s;
@@ -2862,7 +2899,7 @@ a.article-card {
 }
 
 .code-group-content .code-copy:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.1);
   color: #374151;
 }
 
@@ -2879,12 +2916,13 @@ a.article-card {
 
 /* 暗色模式 */
 .app.dark .code-group {
-  border-color: #374151;
+  background: #1e1e1e;
+  border-color: #333;
 }
 
-.app.dark .code-group-tabs {
-  background: #1f2937;
-  border-bottom-color: #374151;
+.app.dark .code-group-header {
+  background: #2d2d2d;
+  border-bottom-color: #333;
 }
 
 .app.dark .code-group-tab {
@@ -2893,21 +2931,20 @@ a.article-card {
 
 .app.dark .code-group-tab:hover {
   color: #d1d5db;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .app.dark .code-group-tab.active {
-  color: var(--color-primary-light);
-  border-bottom-color: var(--color-primary-light);
-  background: #111827;
+  color: #e5e5e5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .app.dark .code-group-content .code-copy {
-  background: rgba(255, 255, 255, 0.1);
-  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.05);
+  color: #6b7280;
 }
 
 .app.dark .code-group-content .code-copy:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #d1d5db;
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
 }

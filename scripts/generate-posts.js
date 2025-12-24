@@ -295,7 +295,14 @@ function preprocessCodeGroups(body) {
     }).join('\n')
     
     return `<div class="code-group" data-group="${groupId}">
-<div class="code-group-tabs">${tabs}</div>
+<div class="code-group-header">
+  <div class="code-dots">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </div>
+  <div class="code-group-tabs">${tabs}</div>
+</div>
 <div class="code-group-panels">
 ${panels}
 </div>
