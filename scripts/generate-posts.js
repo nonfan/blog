@@ -295,14 +295,7 @@ function preprocessCodeGroups(body) {
     }).join('\n')
     
     return `<div class="code-group" data-group="${groupId}">
-<div class="code-group-header">
-  <div class="code-dots">
-    <span class="dot red"></span>
-    <span class="dot yellow"></span>
-    <span class="dot green"></span>
-  </div>
-  <div class="code-group-tabs">${tabs}</div>
-</div>
+<div class="code-group-tabs">${tabs}</div>
 <div class="code-group-panels">
 ${panels}
 </div>
@@ -333,16 +326,27 @@ async function renderMarkdown(body) {
       let codeBlockHtml
       
       if (block.isCodeGroup) {
-        // 代码组内的代码块，简化样式
-        codeBlockHtml = `<div class="code-group-content">
-  <button class="code-copy" data-code="${encodeURIComponent(block.code)}" title="复制代码">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-    </svg>
-  </button>
-  <div class="code-block code-light">${lightHtml}</div>
-  <div class="code-block code-dark">${darkHtml}</div>
+        // 代码组内的代码块，使用和普通代码块一样的结构
+        codeBlockHtml = `<div class="code-block-wrapper code-group-block">
+  <div class="code-header">
+    <div class="code-dots has-title">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+    <div class="code-title">${block.title}</div>
+    <div class="code-lang">${block.lang}</div>
+  </div>
+  <div class="code-content">
+    <button class="code-copy" data-code="${encodeURIComponent(block.code)}" title="复制代码">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    </button>
+    <div class="code-block code-light">${lightHtml}</div>
+    <div class="code-block code-dark">${darkHtml}</div>
+  </div>
 </div>`
       } else {
         // 普通代码块
