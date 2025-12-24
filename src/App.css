@@ -2785,3 +2785,129 @@ a.article-card {
 .app.dark .custom-block.details summary {
   color: #d1d5db;
 }
+
+
+/* 代码组 */
+.code-group {
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.code-group-tabs {
+  display: flex;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.code-group-tab {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.code-group-tab:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.code-group-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: #fff;
+}
+
+.code-group-panels {
+  position: relative;
+}
+
+.code-group-panel {
+  display: none;
+}
+
+.code-group-panel.active {
+  display: block;
+}
+
+.code-group-content {
+  position: relative;
+}
+
+.code-group-content .code-copy {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: #6b7280;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.code-group-content:hover .code-copy {
+  opacity: 1;
+}
+
+.code-group-content .code-copy:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: #374151;
+}
+
+.code-group-content .code-block {
+  margin: 0;
+  border-radius: 0;
+}
+
+.code-group-content .code-block pre {
+  margin: 0;
+  padding: 16px;
+  border-radius: 0;
+}
+
+/* 暗色模式 */
+.app.dark .code-group {
+  border-color: #374151;
+}
+
+.app.dark .code-group-tabs {
+  background: #1f2937;
+  border-bottom-color: #374151;
+}
+
+.app.dark .code-group-tab {
+  color: #9ca3af;
+}
+
+.app.dark .code-group-tab:hover {
+  color: #d1d5db;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.app.dark .code-group-tab.active {
+  color: var(--color-primary-light);
+  border-bottom-color: var(--color-primary-light);
+  background: #111827;
+}
+
+.app.dark .code-group-content .code-copy {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+.app.dark .code-group-content .code-copy:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #d1d5db;
+}

@@ -204,6 +204,32 @@ export default function PostDetail() {
     return () => document.removeEventListener('click', handleClick)
   }, [])
 
+  // 处理代码组标签切换
+  useEffect(() => {
+    const handleTabClick = (e: MouseEvent) => {
+      const tab = (e.target as HTMLElement).closest('.code-group-tab') as HTMLButtonElement
+      if (!tab) return
+      
+      const tabId = tab.dataset.tab
+      if (!tabId) return
+      
+      const codeGroup = tab.closest('.code-group')
+      if (!codeGroup) return
+      
+      // 切换标签激活状态
+      codeGroup.querySelectorAll('.code-group-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      
+      // 切换面板显示
+      codeGroup.querySelectorAll('.code-group-panel').forEach(p => p.classList.remove('active'))
+      const panel = codeGroup.querySelector(`[data-panel="${tabId}"]`)
+      panel?.classList.add('active')
+    }
+
+    document.addEventListener('click', handleTabClick)
+    return () => document.removeEventListener('click', handleTabClick)
+  }, [])
+
   // 处理图片点击 - 打开灯箱
   useEffect(() => {
     const handleImageClick = (e: MouseEvent) => {

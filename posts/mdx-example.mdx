@@ -250,6 +250,53 @@ HAVING COUNT(orders.id) > 5
 ORDER BY order_count DESC;
 ```
 
+### 代码组
+
+代码组可以将多个相关的代码块组合在一起，通过标签切换查看不同的代码。使用 `::: code-group` 语法：
+
+::: code-group
+
+```js [config.js]
+module.exports = {
+  name: 'my-app',
+  port: 3000
+}
+```
+
+```ts [config.ts]
+export default {
+  name: 'my-app',
+  port: 3000
+} as const
+```
+
+```json [config.json]
+{
+  "name": "my-app",
+  "port": 3000
+}
+```
+
+:::
+
+代码组适合展示同一功能在不同语言或框架中的实现：
+
+::: code-group
+
+```bash [npm]
+npm install vite
+```
+
+```bash [yarn]
+yarn add vite
+```
+
+```bash [pnpm]
+pnpm add vite
+```
+
+:::
+
 ## 表格
 
 | 功能 | 语法 | 示例 |
@@ -420,6 +467,7 @@ $$
 - 外部链接自动在新标签页打开
 - 图片自动懒加载，点击可放大查看
 - 代码块支持自定义标题和语法高亮
+- 代码组支持多语言切换展示
 - 标题自动生成锚点链接
 - 支持带文字的分隔线
 - 支持技术文章和散文两种类型

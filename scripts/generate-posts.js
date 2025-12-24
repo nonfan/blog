@@ -248,13 +248,73 @@ ${innerContent}
   })
 }
 
+// 代码组计数器
+let codeGroupCounter = 0
+
+// 预处理代码组语法 ::: code-group
+function preprocessCodeGroups(body) {
+  const codeGroupRegex = /^:::\s*code-group\s*\n([\s\S]*?)^:::\s*$/gm
+  
+  return body.replace(codeGroupRegex, (match, content) => {
+    // 提取所有代码块
+    const codeBlockRegex = /```(\w+)(?:\s+\[([^\]]+)\])?\n([\s\S]*?)```/g
+    const blocks = []
+    let blockMatch
+    
+    while ((blockMatch = codeBlockRegex.exec(content)) !== null) {
+      const [, lang, title, code] = blockMatch
+      blocks.push({
+        lang,
+        title: title || lang,
+        code: code.trim()
+      })
+    }
+    
+    if (blocks.length === 0) return match
+    
+    const groupId = `code-group-${codeGroupCounter++}`
+    
+    // 生成标签
+    const tabs = blocks.map((block, index) => 
+      `<button class="code-group-tab${index === 0 ? ' active' : ''}" data-tab="${groupId}-${index}">${block.title}</button>`
+    ).join('')
+    
+    // 生成代码块占位符（稍后会被替换为高亮代码）
+    const panels = blocks.map((block, index) => {
+      const placeholder = `<!--CODE_GROUP_BLOCK_${groupId}_${index}-->`
+      currentCodeBlocks.push({
+        placeholder,
+        code: block.code,
+        lang: block.lang,
+        title: block.title,
+        isCodeGroup: true,
+        groupId,
+        index
+      })
+      return `<div class="code-group-panel${index === 0 ? ' active' : ''}" data-panel="${groupId}-${index}">${placeholder}</div>`
+    }).join('\n')
+    
+    return `<div class="code-group" data-group="${groupId}">
+<div class="code-group-tabs">${tabs}</div>
+<div class="code-group-panels">
+${panels}
+</div>
+</div>
+
+`
+  })
+}
+
 async function renderMarkdown(body) {
   // 重置状态
   currentIdCounts = new Map()
   currentCodeBlocks = []
+  codeGroupCounter = 0
 
+  // 预处理代码组（必须在容器之前）
+  let processedBody = preprocessCodeGroups(body)
   // 预处理自定义容器
-  const processedBody = preprocessContainers(body)
+  processedBody = preprocessContainers(processedBody)
 
   let html = marked.parse(processedBody)
   
@@ -263,10 +323,26 @@ async function renderMarkdown(body) {
       const lightHtml = await codeToHtml(block.code, { lang: block.lang, theme: 'one-light' })
       const darkHtml = await codeToHtml(block.code, { lang: block.lang, theme: 'one-dark-pro' })
       
-      const hasTitle = !!block.title
-      const titleHtml = hasTitle ? `<div class="code-title">${block.title}</div>` : ''
+      let codeBlockHtml
       
-      const codeBlockHtml = `
+      if (block.isCodeGroup) {
+        // 代码组内的代码块，简化样式
+        codeBlockHtml = `<div class="code-group-content">
+  <button class="code-copy" data-code="${encodeURIComponent(block.code)}" title="复制代码">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+  </button>
+  <div class="code-block code-light">${lightHtml}</div>
+  <div class="code-block code-dark">${darkHtml}</div>
+</div>`
+      } else {
+        // 普通代码块
+        const hasTitle = !!block.title
+        const titleHtml = hasTitle ? `<div class="code-title">${block.title}</div>` : ''
+        
+        codeBlockHtml = `
 <div class="code-block-wrapper">
   <div class="code-header">
     <div class="code-dots${hasTitle ? ' has-title' : ''}">
@@ -288,6 +364,8 @@ async function renderMarkdown(body) {
     <div class="code-block code-dark">${darkHtml}</div>
   </div>
 </div>`
+      }
+      
       html = html.replace(block.placeholder, codeBlockHtml)
     } catch (e) {
       console.error(`Error highlighting ${block.lang}:`, e.message)
