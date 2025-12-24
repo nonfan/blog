@@ -7,6 +7,7 @@ import {
   generateId,
   sortPosts,
   preprocessContainers,
+  generateCodeBlockHeader,
   marked
 } from './post-utils.js'
 
@@ -425,5 +426,55 @@ describe('preprocessContainers', () => {
 :::`
     const result = preprocessContainers(input)
     expect(result).toBe(input)
+  })
+})
+
+
+describe('generateCodeBlockHeader', () => {
+  describe('普通代码块', () => {
+    it('有标题时应该添加 has-title 类', () => {
+      const html = generateCodeBlockHeader({ lang: 'javascript', title: 'example.js' })
+      expect(html).toContain('class="code-dots has-title"')
+      expect(html).toContain('<div class="code-title">example.js</div>')
+    })
+
+    it('无标题时不应该有 has-title 类', () => {
+      const html = generateCodeBlockHeader({ lang: 'javascript' })
+      expect(html).toContain('class="code-dots"')
+      expect(html).not.toContain('has-title')
+      expect(html).not.toContain('code-title')
+    })
+
+    it('应该包含三个圆点', () => {
+      const html = generateCodeBlockHeader({ lang: 'typescript', title: 'test.ts' })
+      expect(html).toContain('class="dot red"')
+      expect(html).toContain('class="dot yellow"')
+      expect(html).toContain('class="dot green"')
+    })
+
+    it('应该显示语言标签', () => {
+      const html = generateCodeBlockHeader({ lang: 'python', title: 'main.py' })
+      expect(html).toContain('<div class="code-lang">python</div>')
+    })
+  })
+
+  describe('代码组', () => {
+    it('代码组 header 不应该有 has-title 类', () => {
+      const html = generateCodeBlockHeader({ lang: 'javascript', isCodeGroup: true })
+      expect(html).toContain('class="code-dots"')
+      expect(html).not.toContain('has-title')
+    })
+
+    it('代码组应该使用 code-group-header 类', () => {
+      const html = generateCodeBlockHeader({ lang: 'javascript', isCodeGroup: true })
+      expect(html).toContain('class="code-group-header"')
+    })
+
+    it('代码组应该包含三个圆点', () => {
+      const html = generateCodeBlockHeader({ lang: 'javascript', isCodeGroup: true })
+      expect(html).toContain('class="dot red"')
+      expect(html).toContain('class="dot yellow"')
+      expect(html).toContain('class="dot green"')
+    })
   })
 })

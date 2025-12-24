@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef, memo } from 'react'
 import { getPostBySlug } from '../utils/posts'
 import { useMobileMenu } from '../App'
 import { useConfig } from '../config/ConfigContext'
@@ -19,6 +19,14 @@ const htmlModules = import.meta.glob<string>('/src/generated/html/*.html', {
   import: 'default',
   eager: true,
 })
+
+// 独立的文章内容组件，避免滚动时重新渲染
+const PostContent = memo(({ html, isArticle }: { html: string; isArticle: boolean }) => (
+  <div 
+    className={`post-content ${isArticle ? 'article-content' : ''}`}
+    dangerouslySetInnerHTML={{ __html: html }} 
+  />
+))
 
 export default function PostDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -206,6 +214,38 @@ export default function PostDetail() {
 
   // 处理代码组标签切换
   useEffect(() => {
+    // 恢复之前保存的选项卡状态
+    const restoreTabStates = () => {
+      document.querySelectorAll('.code-group').forEach(codeGroup => {
+        const groupId = codeGroup.getAttribute('data-group')
+        if (!groupId) return
+        
+        const savedTabId = sessionStorage.getItem(`code-group-tab-${groupId}`)
+        if (!savedTabId) return
+        
+        const tab = codeGroup.querySelector(`[data-tab="${savedTabId}"]`) as HTMLButtonElement
+        if (!tab) return
+        
+        // 切换标签激活状态
+        codeGroup.querySelectorAll('.code-group-tab').forEach(t => t.classList.remove('active'))
+        tab.classList.add('active')
+        
+        // 切换面板显示
+        codeGroup.querySelectorAll('.code-group-panel').forEach(p => p.classList.remove('active'))
+        const panel = codeGroup.querySelector(`[data-panel="${savedTabId}"]`)
+        panel?.classList.add('active')
+        
+        // 更新语言显示
+        const lang = tab.dataset.lang
+        const langEl = codeGroup.querySelector('.code-group-header .code-lang')
+        if (langEl && lang) {
+          langEl.textContent = lang
+        }
+      })
+    }
+    
+    restoreTabStates()
+
     const handleTabClick = (e: MouseEvent) => {
       const tab = (e.target as HTMLElement).closest('.code-group-tab') as HTMLButtonElement
       if (!tab) return
@@ -216,6 +256,13 @@ export default function PostDetail() {
       const codeGroup = tab.closest('.code-group')
       if (!codeGroup) return
       
+      const groupId = codeGroup.getAttribute('data-group')
+      
+      // 保存选项卡状态
+      if (groupId) {
+        sessionStorage.setItem(`code-group-tab-${groupId}`, tabId)
+      }
+      
       // 切换标签激活状态
       codeGroup.querySelectorAll('.code-group-tab').forEach(t => t.classList.remove('active'))
       tab.classList.add('active')
@@ -224,11 +271,18 @@ export default function PostDetail() {
       codeGroup.querySelectorAll('.code-group-panel').forEach(p => p.classList.remove('active'))
       const panel = codeGroup.querySelector(`[data-panel="${tabId}"]`)
       panel?.classList.add('active')
+      
+      // 更新语言显示
+      const lang = tab.dataset.lang
+      const langEl = codeGroup.querySelector('.code-group-header .code-lang')
+      if (langEl && lang) {
+        langEl.textContent = lang
+      }
     }
 
     document.addEventListener('click', handleTabClick)
     return () => document.removeEventListener('click', handleTabClick)
-  }, [])
+  }, [post])
 
   // 处理图片点击 - 打开灯箱
   useEffect(() => {
@@ -302,10 +356,7 @@ export default function PostDetail() {
             </div>
           )}
 
-          <div 
-            className={`post-content ${isArticle ? 'article-content' : ''}`}
-            dangerouslySetInnerHTML={{ __html: html }} 
-          />
+          <PostContent html={html} isArticle={isArticle} />
 
           {/* 文章底部 */}
           <PostFooter slug={slug || ''} lastUpdated={post.date} tags={post.tags} />

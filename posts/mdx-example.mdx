@@ -252,9 +252,27 @@ ORDER BY order_count DESC;
 
 ### 代码组
 
-代码组可以将多个相关的代码块组合在一起，通过标签切换查看不同的代码。使用 `::: code-group` 语法：
+代码组可以将多个相关的代码块组合在一起，通过标签切换查看不同的代码。
 
-::: code-group
+**语法格式：**
+
+````text [代码组语法]
+:::code-group
+
+```语言 [标签名称]
+代码内容
+```
+
+```语言 [标签名称]
+代码内容
+```
+
+:::
+````
+
+**示例：**
+
+:::code-group
 
 ```js [config.js]
 module.exports = {
@@ -281,7 +299,7 @@ export default {
 
 代码组适合展示同一功能在不同语言或框架中的实现：
 
-::: code-group
+:::code-group
 
 ```bash [npm]
 npm install vite
@@ -315,26 +333,26 @@ pnpm add vite
 
 ## 自定义容器
 
-支持 VitePress 风格的自定义容器语法，使用 `:::type` 格式：
+支持 VitePress 风格的自定义容器语法，使用 `:::type` 格式（注意 `:::` 和类型之间没有空格）：
 
 ```markdown
-::: info
+:::info
 信息内容
 :::
 
-::: tip
+:::tip
 提示内容
 :::
 
-::: warning
+:::warning
 警告内容
 :::
 
-::: danger
+:::danger
 危险内容
 :::
 
-::: details 标题
+:::details 标题
 可折叠的详情内容
 :::
 ```
@@ -380,11 +398,11 @@ pnpm add vite
 在类型后面添加空格和标题文字即可自定义标题：
 
 ```markdown
-::: tip 小贴士
+:::tip 小贴士
 自定义标题的提示框内容。
 :::
 
-::: warning 注意事项
+:::warning 注意事项
 自定义标题的警告框内容。
 :::
 ```

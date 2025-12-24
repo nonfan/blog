@@ -251,6 +251,43 @@ ${innerContent}
   })
 }
 
+/**
+ * 生成代码块 header HTML
+ * @param {Object} options - 配置选项
+ * @param {string} options.lang - 代码语言
+ * @param {string} [options.title] - 代码块标题
+ * @param {boolean} [options.isCodeGroup] - 是否是代码组
+ * @returns {string} HTML 字符串
+ */
+export function generateCodeBlockHeader({ lang, title, isCodeGroup = false }) {
+  if (isCodeGroup) {
+    // 代码组的 header 不需要竖线，竖线在 tabs 上
+    return `<div class="code-group-header">
+  <div class="code-dots">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </div>
+  <div class="code-lang">${lang}</div>
+</div>`
+  }
+
+  // 普通代码块：有标题时添加 has-title 类（用于显示竖线）
+  const hasTitle = !!title
+  const dotsClass = hasTitle ? 'code-dots has-title' : 'code-dots'
+  const titleHtml = hasTitle ? `<div class="code-title">${title}</div>` : ''
+
+  return `<div class="code-header">
+  <div class="${dotsClass}">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </div>
+  ${titleHtml}
+  <div class="code-lang">${lang}</div>
+</div>`
+}
+
 // 创建默认 renderer 并配置 marked
 const { renderer } = createMarkedRenderer()
 marked.use({ renderer })

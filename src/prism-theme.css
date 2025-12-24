@@ -30,16 +30,7 @@
 /* 只有当有标题时才显示竖线 */
 .code-dots.has-title {
   padding-right: 16px;
-}
-
-.code-dots.has-title::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: #e5e7eb;
+  border-right: 1px solid #e5e7eb;
 }
 
 .code-dots .dot {
@@ -187,8 +178,8 @@
   border-bottom-color: #333;
 }
 
-.app.dark .code-dots.has-title::after {
-  background: #444;
+.app.dark .code-dots.has-title {
+  border-right-color: #444;
 }
 
 .app.dark .code-title {

@@ -254,13 +254,13 @@ let codeGroupCounter = 0
 // 预处理代码组语法 ::: code-group
 function preprocessCodeGroups(body) {
   const codeGroupRegex = /^:::\s*code-group\s*\n([\s\S]*?)^:::\s*$/gm
-  
+
   return body.replace(codeGroupRegex, (match, content) => {
     // 提取所有代码块
     const codeBlockRegex = /```(\w+)(?:\s+\[([^\]]+)\])?\n([\s\S]*?)```/g
     const blocks = []
     let blockMatch
-    
+
     while ((blockMatch = codeBlockRegex.exec(content)) !== null) {
       const [, lang, title, code] = blockMatch
       blocks.push({
@@ -269,33 +269,48 @@ function preprocessCodeGroups(body) {
         code: code.trim()
       })
     }
-    
+
     if (blocks.length === 0) return match
-    
+
     const groupId = `code-group-${codeGroupCounter++}`
-    
-    // 生成标签
-    const tabs = blocks.map((block, index) => 
-      `<button class="code-group-tab${index === 0 ? ' active' : ''}" data-tab="${groupId}-${index}">${block.title}</button>`
-    ).join('')
-    
+
+    // 生成标签 HTML，添加 data-lang 属性
+    const tabsHtml = blocks
+      .map(
+        (block, index) =>
+          `<button class="code-group-tab${index === 0 ? ' active' : ''}" data-tab="${groupId}-${index}" data-lang="${block.lang}">${block.title}</button>`
+      )
+      .join('')
+
     // 生成代码块占位符（稍后会被替换为高亮代码）
-    const panels = blocks.map((block, index) => {
-      const placeholder = `<!--CODE_GROUP_BLOCK_${groupId}_${index}-->`
-      currentCodeBlocks.push({
-        placeholder,
-        code: block.code,
-        lang: block.lang,
-        title: block.title,
-        isCodeGroup: true,
-        groupId,
-        index
+    const panels = blocks
+      .map((block, index) => {
+        const placeholder = `<!--CODE_GROUP_BLOCK_${groupId}_${index}-->`
+        currentCodeBlocks.push({
+          placeholder,
+          code: block.code,
+          lang: block.lang,
+          title: block.title,
+          isCodeGroup: true,
+          groupId,
+          index
+        })
+        return `<div class="code-group-panel${index === 0 ? ' active' : ''}" data-panel="${groupId}-${index}">${placeholder}</div>`
       })
-      return `<div class="code-group-panel${index === 0 ? ' active' : ''}" data-panel="${groupId}-${index}">${placeholder}</div>`
-    }).join('\n')
-    
+      .join('\n')
+
+    // header 放在代码组外层，第一个代码块的语言作为初始显示
+    const firstLang = blocks[0].lang
     return `<div class="code-group" data-group="${groupId}">
-<div class="code-group-tabs">${tabs}</div>
+<div class="code-group-header">
+  <div class="code-dots">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </div>
+  <div class="code-group-tabs">${tabsHtml}</div>
+  <div class="code-lang">${firstLang}</div>
+</div>
 <div class="code-group-panels">
 ${panels}
 </div>
@@ -326,17 +341,8 @@ async function renderMarkdown(body) {
       let codeBlockHtml
       
       if (block.isCodeGroup) {
-        // 代码组内的代码块，使用和普通代码块一样的结构
+        // 代码组内的代码块：不显示 header（header 在代码组外层）
         codeBlockHtml = `<div class="code-block-wrapper code-group-block">
-  <div class="code-header">
-    <div class="code-dots has-title">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-    </div>
-    <div class="code-title">${block.title}</div>
-    <div class="code-lang">${block.lang}</div>
-  </div>
   <div class="code-content">
     <button class="code-copy" data-code="${encodeURIComponent(block.code)}" title="复制代码">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
