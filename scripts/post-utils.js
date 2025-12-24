@@ -207,6 +207,43 @@ export function createMarkedRenderer() {
   }
 }
 
+// 容器类型的默认标题
+const containerTitles = {
+  info: '信息',
+  tip: '提示',
+  warning: '警告',
+  danger: '危险',
+  details: '详情'
+}
+
+/**
+ * 预处理自定义容器语法 :::type
+ */
+export function preprocessContainers(body) {
+  const containerRegex = /^:::\s*(info|tip|warning|danger|details)\s*(.*)?\n([\s\S]*?)^:::\s*$/gm
+  
+  return body.replace(containerRegex, (match, type, customTitle, content) => {
+    const title = customTitle?.trim() || containerTitles[type] || type
+    const innerContent = content.trim()
+    
+    if (type === 'details') {
+      return `<details class="custom-block details">
+<summary>${title}</summary>
+
+${innerContent}
+
+</details>`
+    }
+    
+    return `<div class="custom-block ${type}">
+<p class="custom-block-title">${title}</p>
+
+${innerContent}
+
+</div>`
+  })
+}
+
 // 创建默认 renderer 并配置 marked
 const { renderer } = createMarkedRenderer()
 marked.use({ renderer })

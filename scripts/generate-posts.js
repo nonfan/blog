@@ -206,12 +206,51 @@ const renderer = {
 
 marked.use({ renderer })
 
+// 容器类型的默认标题
+const containerTitles = {
+  info: '信息',
+  tip: '提示',
+  warning: '警告',
+  danger: '危险',
+  details: '详情'
+}
+
+// 预处理自定义容器语法 :::type
+function preprocessContainers(body) {
+  // 匹配 :::type [title] ... :::
+  const containerRegex = /^:::\s*(info|tip|warning|danger|details)\s*(.*)?\n([\s\S]*?)^:::\s*$/gm
+  
+  return body.replace(containerRegex, (match, type, customTitle, content) => {
+    const title = customTitle?.trim() || containerTitles[type] || type
+    const innerContent = content.trim()
+    
+    if (type === 'details') {
+      return `<details class="custom-block details">
+<summary>${title}</summary>
+
+${innerContent}
+
+</details>`
+    }
+    
+    return `<div class="custom-block ${type}">
+<p class="custom-block-title">${title}</p>
+
+${innerContent}
+
+</div>`
+  })
+}
+
 async function renderMarkdown(body) {
   // 重置状态
   currentIdCounts = new Map()
   currentCodeBlocks = []
 
-  let html = marked.parse(body)
+  // 预处理自定义容器
+  const processedBody = preprocessContainers(body)
+
+  let html = marked.parse(processedBody)
   
   for (const block of currentCodeBlocks) {
     try {

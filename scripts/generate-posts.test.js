@@ -6,6 +6,7 @@ import {
   getExcerpt,
   generateId,
   sortPosts,
+  preprocessContainers,
   marked
 } from './post-utils.js'
 
@@ -334,5 +335,95 @@ describe('Markdown 渲染', () => {
       expect(html).not.toContain('divider-with-text')
       expect(html).toContain('<p>这是普通段落</p>')
     })
+  })
+})
+
+describe('preprocessContainers', () => {
+  it('应该处理 info 容器', () => {
+    const input = `::: info
+这是信息内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('class="custom-block info"')
+    expect(result).toContain('class="custom-block-title"')
+    expect(result).toContain('信息')
+    expect(result).toContain('这是信息内容')
+  })
+
+  it('应该处理 tip 容器', () => {
+    const input = `::: tip
+这是提示内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('class="custom-block tip"')
+    expect(result).toContain('提示')
+  })
+
+  it('应该处理 warning 容器', () => {
+    const input = `::: warning
+这是警告内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('class="custom-block warning"')
+    expect(result).toContain('警告')
+  })
+
+  it('应该处理 danger 容器', () => {
+    const input = `::: danger
+这是危险内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('class="custom-block danger"')
+    expect(result).toContain('危险')
+  })
+
+  it('应该处理 details 容器', () => {
+    const input = `::: details 详情
+这是详情内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('<details class="custom-block details">')
+    expect(result).toContain('<summary>详情</summary>')
+    expect(result).toContain('这是详情内容')
+  })
+
+  it('应该支持自定义标题', () => {
+    const input = `::: tip 小贴士
+自定义标题的内容
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('小贴士')
+    expect(result).not.toContain('提示')
+  })
+
+  it('应该处理多个容器', () => {
+    const input = `::: info
+信息1
+:::
+
+::: warning
+警告1
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('class="custom-block info"')
+    expect(result).toContain('class="custom-block warning"')
+  })
+
+  it('应该保留容器内的 Markdown 语法', () => {
+    const input = `::: tip
+- 列表项1
+- 列表项2
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toContain('- 列表项1')
+    expect(result).toContain('- 列表项2')
+  })
+
+  it('不应该处理不支持的容器类型', () => {
+    const input = `::: note
+这不是支持的类型
+:::`
+    const result = preprocessContainers(input)
+    expect(result).toBe(input)
   })
 })

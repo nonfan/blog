@@ -2662,3 +2662,105 @@ a.article-card {
 .post-content img {
   cursor: zoom-in;
 }
+
+
+/* VitePress 风格自定义容器 */
+.custom-block {
+  margin: 16px 0;
+  padding: 16px 16px 8px;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.custom-block-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.custom-block.info {
+  background-color: #e7f3ff;
+  border-color: #3b82f6;
+}
+
+.custom-block.info .custom-block-title {
+  color: #1d4ed8;
+}
+
+.custom-block.tip {
+  background-color: #e6f9ed;
+  border-color: #10b981;
+}
+
+.custom-block.tip .custom-block-title {
+  color: #047857;
+}
+
+.custom-block.warning {
+  background-color: #fff8e6;
+  border-color: #f59e0b;
+}
+
+.custom-block.warning .custom-block-title {
+  color: #b45309;
+}
+
+.custom-block.danger {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+.custom-block.danger .custom-block-title {
+  color: #b91c1c;
+}
+
+.custom-block.details {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.custom-block.details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 暗色模式 */
+.app.dark .custom-block.info {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+.app.dark .custom-block.info .custom-block-title {
+  color: #60a5fa;
+}
+
+.app.dark .custom-block.tip {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+.app.dark .custom-block.tip .custom-block-title {
+  color: #34d399;
+}
+
+.app.dark .custom-block.warning {
+  background-color: rgba(245, 158, 11, 0.15);
+}
+
+.app.dark .custom-block.warning .custom-block-title {
+  color: #fbbf24;
+}
+
+.app.dark .custom-block.danger {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+.app.dark .custom-block.danger .custom-block-title {
+  color: #f87171;
+}
+
+.app.dark .custom-block.details {
+  background-color: rgba(156, 163, 175, 0.15);
+}
+
+.app.dark .custom-block.details summary {
+  color: #d1d5db;
+}
