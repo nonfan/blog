@@ -2667,66 +2667,83 @@ a.article-card {
 /* VitePress 风格自定义容器 */
 .custom-block {
   margin: 16px 0;
-  padding: 16px 16px 8px;
+  padding: 16px 20px;
   border-radius: 8px;
+  border: 1px solid;
   border-left: 4px solid;
 }
 
 .custom-block-title {
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.custom-block p:last-child {
+  margin-bottom: 0;
 }
 
 .custom-block.info {
-  background-color: #e7f3ff;
-  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  border-left-color: #3b82f6;
 }
 
 .custom-block.info .custom-block-title {
-  color: #1d4ed8;
+  color: #3b82f6;
 }
 
 .custom-block.tip {
-  background-color: #e6f9ed;
-  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+  border-left-color: #10b981;
 }
 
 .custom-block.tip .custom-block-title {
-  color: #047857;
+  color: #10b981;
 }
 
 .custom-block.warning {
-  background-color: #fff8e6;
-  border-color: #f59e0b;
+  background-color: rgba(234, 179, 8, 0.08);
+  border-color: rgba(234, 179, 8, 0.3);
+  border-left-color: #eab308;
 }
 
 .custom-block.warning .custom-block-title {
-  color: #b45309;
+  color: #ca8a04;
 }
 
 .custom-block.danger {
-  background-color: #fee2e2;
-  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  border-left-color: #ef4444;
 }
 
 .custom-block.danger .custom-block-title {
-  color: #b91c1c;
+  color: #dc2626;
 }
 
 .custom-block.details {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
+  background-color: rgba(107, 114, 128, 0.08);
+  border-color: rgba(107, 114, 128, 0.3);
+  border-left-color: #6b7280;
 }
 
 .custom-block.details summary {
   cursor: pointer;
-  font-weight: 600;
-  color: #374151;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
 }
 
 /* 暗色模式 */
 .app.dark .custom-block.info {
-  background-color: rgba(59, 130, 246, 0.15);
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
 }
 
 .app.dark .custom-block.info .custom-block-title {
@@ -2734,7 +2751,8 @@ a.article-card {
 }
 
 .app.dark .custom-block.tip {
-  background-color: rgba(16, 185, 129, 0.15);
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
 }
 
 .app.dark .custom-block.tip .custom-block-title {
@@ -2742,15 +2760,17 @@ a.article-card {
 }
 
 .app.dark .custom-block.warning {
-  background-color: rgba(245, 158, 11, 0.15);
+  background-color: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.25);
 }
 
 .app.dark .custom-block.warning .custom-block-title {
-  color: #fbbf24;
+  color: #facc15;
 }
 
 .app.dark .custom-block.danger {
-  background-color: rgba(239, 68, 68, 0.15);
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 .app.dark .custom-block.danger .custom-block-title {
@@ -2758,9 +2778,10 @@ a.article-card {
 }
 
 .app.dark .custom-block.details {
-  background-color: rgba(156, 163, 175, 0.15);
+  background-color: rgba(107, 114, 128, 0.1);
+  border-color: rgba(107, 114, 128, 0.25);
 }
 
 .app.dark .custom-block.details summary {
-  color: #d1d5db;
+  color: #9ca3af;
 }
