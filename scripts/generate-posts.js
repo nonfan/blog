@@ -7,7 +7,10 @@ import katex from 'katex'
 import markedFootnote from 'marked-footnote'
 
 // 配置 marked 使用脚注扩展
-marked.use(markedFootnote())
+marked.use(markedFootnote({
+  description: '脚注',
+  refMarkers: true
+}))
 
 const postsDir = './posts'
 const outputFile = './src/generated/posts.json'
