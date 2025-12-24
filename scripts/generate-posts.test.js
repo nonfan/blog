@@ -8,6 +8,7 @@ import {
   sortPosts,
   preprocessContainers,
   generateCodeBlockHeader,
+  createMarkedRenderer,
   marked
 } from './post-utils.js'
 
@@ -476,5 +477,101 @@ describe('generateCodeBlockHeader', () => {
       expect(html).toContain('class="dot yellow"')
       expect(html).toContain('class="dot green"')
     })
+  })
+})
+
+
+describe('createMarkedRenderer', () => {
+  it('应该返回 renderer 和 resetIdCounts 函数', () => {
+    const { renderer, resetIdCounts } = createMarkedRenderer()
+    expect(renderer).toBeDefined()
+    expect(typeof resetIdCounts).toBe('function')
+  })
+
+  it('resetIdCounts 应该重置标题 ID 计数', () => {
+    const { renderer, resetIdCounts } = createMarkedRenderer()
+    marked.use({ renderer })
+    
+    // 渲染两个相同的标题
+    marked.parse('## 测试标题')
+    const html1 = marked.parse('## 测试标题')
+    expect(html1).toContain('id="测试标题-1"')
+    
+    // 重置后应该从头开始计数
+    resetIdCounts()
+    const html2 = marked.parse('## 测试标题')
+    expect(html2).toContain('id="测试标题"')
+    expect(html2).not.toContain('id="测试标题-')
+  })
+})
+
+describe('getExcerpt 边界情况', () => {
+  it('应该处理只有代码块的内容', () => {
+    const body = '```js\nconst a = 1\n```'
+    const excerpt = getExcerpt(body)
+    expect(excerpt).toBe('')
+  })
+
+  it('应该处理三级标题后的内容', () => {
+    const body = '### 三级标题\n\n这是三级标题后的内容'
+    const excerpt = getExcerpt(body)
+    expect(excerpt).toBe('这是三级标题后的内容')
+  })
+})
+
+describe('sortPosts 边界情况', () => {
+  it('应该处理相同日期的文章', () => {
+    const posts = [
+      { title: 'A', pinned: false, date: '2024-01-01' },
+      { title: 'B', pinned: false, date: '2024-01-01' }
+    ]
+    const sorted = sortPosts(posts)
+    expect(sorted.length).toBe(2)
+  })
+
+  it('应该处理 true 置顶和数字置顶混合', () => {
+    const posts = [
+      { title: 'A', pinned: true, date: '2024-01-01' },
+      { title: 'B', pinned: 3, date: '2024-01-01' },
+      { title: 'C', pinned: true, date: '2024-01-02' }
+    ]
+    const sorted = sortPosts(posts)
+    // 数字置顶优先
+    expect(sorted[0].title).toBe('B')
+    // true 置顶按日期排序
+    expect(sorted[1].title).toBe('C')
+    expect(sorted[2].title).toBe('A')
+  })
+})
+
+describe('cleanText 边界情况', () => {
+  it('应该处理嵌套的 Markdown 语法', () => {
+    const text = '**_粗斜体_**'
+    const result = cleanText(text)
+    expect(result).toBe('粗斜体')
+  })
+
+  it('应该处理空内容', () => {
+    const result = cleanText('')
+    expect(result).toBe('')
+  })
+
+  it('应该处理只有空格的内容', () => {
+    const result = cleanText('   ')
+    expect(result).toBe('')
+  })
+})
+
+describe('generateId 边界情况', () => {
+  it('应该处理混合中英文', () => {
+    expect(generateId('Hello 世界')).toBe('hello-世界')
+  })
+
+  it('应该处理多个连续空格', () => {
+    expect(generateId('Hello   World')).toBe('hello-world')
+  })
+
+  it('应该处理数字', () => {
+    expect(generateId('React 18 新特性')).toBe('react-18-新特性')
   })
 })
