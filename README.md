@@ -22,13 +22,15 @@
 - 🏷️ 标签筛选（可折叠标签栏）
 - 📖 文章目录导航（移动端下拉卡片）
 - ✨ 代码高亮（Shiki）
+- 📦 代码组（多语言切换展示）
 - 🔗 GitHub 编辑链接
 - 🎬 开屏动画（可配置）
 - 📄 PDF 导出
 - 🔄 上/下篇文章导航
-- 🖼️ 图片懒加载
+- 🖼️ 图片懒加载 + 灯箱预览
 - 🔍 SEO 优化（meta 标签、sitemap）
 - 📝 文章类型支持（技术文章/散文随笔）
+- 💬 自定义容器（info/tip/warning/danger/details）
 
 ## 🚀 快速开始
 
@@ -137,6 +139,50 @@ const hello = 'world'
 ```
 ````
 
+### 代码组
+
+多个相关代码块可以组合成代码组，通过标签切换查看：
+
+````markdown
+:::code-group
+
+```js [config.js]
+module.exports = { name: 'my-app' }
+```
+
+```ts [config.ts]
+export default { name: 'my-app' } as const
+```
+
+:::
+````
+
+### 自定义容器
+
+支持 VitePress 风格的自定义容器：
+
+```markdown
+::: info
+信息提示
+:::
+
+::: tip
+有用的建议
+:::
+
+::: warning
+警告信息
+:::
+
+::: danger
+危险警告
+:::
+
+::: details 点击展开
+可折叠的详情内容
+:::
+```
+
 ## 🏷️ 标签筛选
 
 首页顶部有标签筛选栏：
@@ -193,4 +239,6 @@ const hello = 'world'
 - Marked（Markdown 解析）
 - GSAP（动画）
 
-## 📄 Licen
+## 📄 License
+
+MIT
