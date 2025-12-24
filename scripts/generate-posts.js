@@ -225,8 +225,15 @@ const containerTitles = {
 
 // 预处理数学公式
 function preprocessMath(body) {
-  // 处理块级公式 $$ ... $$ 或 $ ... $ (单独一行)
-  body = body.replace(/^\$\$?\n([\s\S]*?)\n\$\$?$/gm, (match, formula) => {
+  // 先保护代码块，避免代码块内的公式被渲染
+  const codeBlocks = []
+  body = body.replace(/````[\s\S]*?````|```[\s\S]*?```|`[^`\n]+`/g, (match) => {
+    codeBlocks.push(match)
+    return `__CODE_BLOCK_${codeBlocks.length - 1}__`
+  })
+
+  // 处理块级公式 $$ ... $$
+  body = body.replace(/^\$\$\n([\s\S]*?)\n\$\$$/gm, (match, formula) => {
     try {
       return katex.renderToString(formula.trim(), {
         displayMode: true,
@@ -249,6 +256,11 @@ function preprocessMath(body) {
       console.error('KaTeX inline error:', e.message)
       return match
     }
+  })
+
+  // 恢复代码块
+  body = body.replace(/__CODE_BLOCK_(\d+)__/g, (match, index) => {
+    return codeBlocks[parseInt(index)]
   })
 
   return body
