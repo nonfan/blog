@@ -346,7 +346,7 @@ describe('preprocessContainers', () => {
     const result = preprocessContainers(input)
     expect(result).toContain('class="custom-block info"')
     expect(result).toContain('class="custom-block-title"')
-    expect(result).toContain('信息')
+    expect(result).toContain('INFO')
     expect(result).toContain('这是信息内容')
   })
 
@@ -356,7 +356,7 @@ describe('preprocessContainers', () => {
 :::`
     const result = preprocessContainers(input)
     expect(result).toContain('class="custom-block tip"')
-    expect(result).toContain('提示')
+    expect(result).toContain('TIP')
   })
 
   it('应该处理 warning 容器', () => {
@@ -365,7 +365,7 @@ describe('preprocessContainers', () => {
 :::`
     const result = preprocessContainers(input)
     expect(result).toContain('class="custom-block warning"')
-    expect(result).toContain('警告')
+    expect(result).toContain('WARNING')
   })
 
   it('应该处理 danger 容器', () => {
@@ -374,7 +374,7 @@ describe('preprocessContainers', () => {
 :::`
     const result = preprocessContainers(input)
     expect(result).toContain('class="custom-block danger"')
-    expect(result).toContain('危险')
+    expect(result).toContain('DANGER')
   })
 
   it('应该处理 details 容器', () => {
@@ -393,7 +393,7 @@ describe('preprocessContainers', () => {
 :::`
     const result = preprocessContainers(input)
     expect(result).toContain('小贴士')
-    expect(result).not.toContain('提示')
+    expect(result).not.toContain('TIP')
   })
 
   it('应该处理多个容器', () => {

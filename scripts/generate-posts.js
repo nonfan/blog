@@ -208,20 +208,22 @@ marked.use({ renderer })
 
 // 容器类型的默认标题
 const containerTitles = {
-  info: '信息',
-  tip: '提示',
-  warning: '警告',
-  danger: '危险',
-  details: '详情'
+  info: 'INFO',
+  tip: 'TIP',
+  warning: 'WARNING',
+  danger: 'DANGER',
+  details: 'DETAILS'
 }
 
 // 预处理自定义容器语法 :::type
 function preprocessContainers(body) {
-  // 匹配 :::type [title] ... :::
-  const containerRegex = /^:::\s*(info|tip|warning|danger|details)\s*(.*)?\n([\s\S]*?)^:::\s*$/gm
+  // 匹配 :::type [title]\n content \n:::
+  // 自定义标题必须在同一行，且不能包含换行
+  const containerRegex = /^:::\s*(info|tip|warning|danger|details)(?:[ \t]+([^\n]*))?\n([\s\S]*?)^:::\s*$/gm
   
   return body.replace(containerRegex, (match, type, customTitle, content) => {
-    const title = customTitle?.trim() || containerTitles[type] || type
+    // 如果有自定义标题则使用，否则使用默认标题
+    const title = customTitle?.trim() || containerTitles[type] || type.toUpperCase()
     const innerContent = content.trim()
     
     if (type === 'details') {
