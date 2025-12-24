@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from 
 import { join } from 'path'
 import { marked } from 'marked'
 import { codeToHtml } from 'shiki'
+import katex from 'katex'
 
 const postsDir = './posts'
 const outputFile = './src/generated/posts.json'
@@ -215,6 +216,37 @@ const containerTitles = {
   details: 'DETAILS'
 }
 
+// 预处理数学公式
+function preprocessMath(body) {
+  // 处理块级公式 $$ ... $$ 或 $ ... $ (单独一行)
+  body = body.replace(/^\$\$?\n([\s\S]*?)\n\$\$?$/gm, (match, formula) => {
+    try {
+      return katex.renderToString(formula.trim(), {
+        displayMode: true,
+        throwOnError: false
+      })
+    } catch (e) {
+      console.error('KaTeX block error:', e.message)
+      return match
+    }
+  })
+
+  // 处理行内公式 $...$（不跨行）
+  body = body.replace(/\$([^\$\n]+)\$/g, (match, formula) => {
+    try {
+      return katex.renderToString(formula.trim(), {
+        displayMode: false,
+        throwOnError: false
+      })
+    } catch (e) {
+      console.error('KaTeX inline error:', e.message)
+      return match
+    }
+  })
+
+  return body
+}
+
 // 预处理自定义容器语法 :::type
 function preprocessContainers(body) {
   // 匹配 :::type [title]\n content \n:::
@@ -326,8 +358,10 @@ async function renderMarkdown(body) {
   currentCodeBlocks = []
   codeGroupCounter = 0
 
+  // 预处理数学公式（必须在其他处理之前）
+  let processedBody = preprocessMath(body)
   // 预处理代码组（必须在容器之前）
-  let processedBody = preprocessCodeGroups(body)
+  processedBody = preprocessCodeGroups(processedBody)
   // 预处理自定义容器
   processedBody = preprocessContainers(processedBody)
 
