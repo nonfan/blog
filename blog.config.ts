@@ -4,8 +4,8 @@
 export default {
   // 站点信息
   site: {
-    // 部署路径：'/' 表示根目录，'/blog' 表示子目录（GitHub Pages 项目页面需要设置为 '/仓库名'）
-    baseUrl: '/blog',
+    // 部署路径：自定义域名使用 ''，GitHub Pages 项目页面使用 '/仓库名'
+    baseUrl: '',
     title: 'MOFAN\'s Blog',
     description: '我的个人博客',
     author: 'mofan',
