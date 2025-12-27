@@ -9,7 +9,7 @@ export default {
     title: 'MOFAN\'s Blog',
     description: '我的个人博客',
     author: 'mofan',
-    logo: 'vite.svg', // logo 文件名（放在 public 目录下，自动拼接 /）
+    logo: 'logo.svg', // logo 文件名（放在 public 目录下，自动拼接 /）
   },
 
   // GitHub 配置（用于编辑链接）
