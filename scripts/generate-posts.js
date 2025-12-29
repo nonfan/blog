@@ -63,6 +63,12 @@ function parseFrontmatter(content) {
 
     const typeMatch = line.match(/^type:\s*(.+)$/)
     if (typeMatch) frontmatter.type = typeMatch[1].trim()
+
+    const tocMatch = line.match(/^toc:\s*(.+)$/i)
+    if (tocMatch) {
+      const value = tocMatch[1].trim().toLowerCase()
+      frontmatter.toc = value !== 'false'
+    }
   })
 
   const tagsMatch = yamlStr.match(/tags:\s*\n((?:\s+-\s+.+\n?)+)/)
@@ -482,7 +488,8 @@ async function main() {
       excerpt,
       content: searchContent, // 用于全文搜索
       pinned: frontmatter.pinned || false,
-      type: frontmatter.type || 'tech'  // 默认为技术文章
+      type: frontmatter.type || 'tech',  // 默认为技术文章
+      toc: frontmatter.toc !== false  // 默认显示目录
     })
   }
 
