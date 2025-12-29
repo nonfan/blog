@@ -32,7 +32,7 @@
 - 🔄 上/下篇文章导航
 - 🖼️ 图片懒加载 + 灯箱预览
 - 🔍 SEO 优化（meta 标签、sitemap）
-- 📝 文章类型支持（技术文章/散文随笔）
+- 📝 文章类型支持（技术文章/散文随笔/计划表）
 - 💬 自定义容器（info/tip/warning/danger/details）
 - 📐 数学公式支持（KaTeX）
 
@@ -110,7 +110,8 @@ tags:
 logo: https://example.com/logo.png  # 可选，文章封面
 pinned: true              # 可选，置顶（无顺序）
 pinned: 1                 # 可选，置顶并指定顺序（数字越小越靠前）
-type: article             # 可选，文章类型：tech（默认）或 article（散文/随笔）
+type: article             # 可选，文章类型：tech/article/plan
+toc: false                # 可选，是否显示目录（默认 true）
 ---
 
 # 文章标题
@@ -120,14 +121,21 @@ type: article             # 可选，文章类型：tech（默认）或 article�
 
 ### 文章类型
 
-- `type: tech`（默认）- 技术文章，显示目录、代码高亮、PDF 导出等
+- `type: tech`（默认）- 技术文章，标准布局
 - `type: article` - 散文/随笔风格：
   - 段落首行缩进两格
   - 标题和标签居中显示
   - 更大的行高和字间距
-  - 隐藏目录导航
-  - 隐藏 PDF 导出按钮
-  - 更窄的内容宽度（800px）
+- `type: plan` - 计划表：
+  - 显示任务完成进度条
+  - 标题居中显示
+
+### 目录显示
+
+- `toc: true`（默认）- 显示右侧目录导航
+- `toc: false` - 隐藏目录导航
+
+目录显示独立于文章类型，所有类型都可以通过 `toc` 字段控制。
 
 ### 置顶说明
 
