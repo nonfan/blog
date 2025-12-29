@@ -35,14 +35,16 @@ pinned: true
 | tags | string[] | 否 | 标签列表 |
 | logo | string | 否 | 文章图标 URL |
 | pinned | boolean \| number | 否 | 置顶设置，见下方说明 |
-| type | string | 否 | 文章类型：`tech`（默认）或 `article` |
+| type | string | 否 | 文章类型：`tech`（默认）、`article` 或 `plan` |
+| toc | boolean | 否 | 是否显示目录，默认 `true` |
 
 ### 文章类型
 
 `type` 字段用于区分不同类型的文章：
 
-- `type: tech` - 技术文章（默认），显示目录、标签、导出 PDF 按钮
-- `type: article` - 散文/随笔，隐藏目录和标签，更简洁的阅读体验
+- `type: tech` - 技术文章（默认），标准布局
+- `type: article` - 散文/随笔，标题居中，更简洁的阅读体验
+- `type: plan` - 计划表，显示任务完成进度条
 
 ```yaml [散文类型示例]
 ---
@@ -52,6 +54,25 @@ tags:
   - 随笔
 ---
 ```
+
+### 目录显示
+
+`toc` 字段控制是否显示右侧目录导航：
+
+- `toc: true` - 显示目录（默认）
+- `toc: false` - 隐藏目录
+
+```yaml [隐藏目录示例]
+---
+title: 2025年计划
+type: plan
+toc: false
+---
+```
+
+:::tip
+目录显示独立于文章类型，所有类型的文章都可以通过 `toc` 字段控制目录显示。
+:::
 
 ### 置顶设置
 
