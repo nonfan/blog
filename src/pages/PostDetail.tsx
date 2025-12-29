@@ -21,9 +21,9 @@ const htmlModules = import.meta.glob<string>('/src/generated/html/*.html', {
 })
 
 // 独立的文章内容组件，避免滚动时重新渲染
-const PostContent = memo(({ html, isArticle }: { html: string; isArticle: boolean }) => (
+const PostContent = memo(({ html, isArticle, isPlan }: { html: string; isArticle: boolean; isPlan: boolean }) => (
   <div 
-    className={`post-content ${isArticle ? 'article-content' : ''}`}
+    className={`post-content ${isArticle ? 'article-content' : ''} ${isPlan ? 'plan-content' : ''}`}
     dangerouslySetInnerHTML={{ __html: html }} 
   />
 ))
@@ -89,9 +89,14 @@ export default function PostDetail() {
 
   // 同步目录到移动端菜单
   useEffect(() => {
+    // 如果文章配置了隐藏目录，则不同步
+    if (post?.toc === false) {
+      setToc([])
+      return
+    }
     setToc(toc)
     return () => setToc([])
-  }, [toc, setToc])
+  }, [toc, setToc, post?.toc])
 
   // 当 activeId 变化时，滚动目录使当前项可见，并更新指示器位置
   useEffect(() => {
@@ -317,6 +322,23 @@ export default function PostDetail() {
   }
 
   const isArticle = post?.type === 'article'
+  const isPlan = post?.type === 'plan'
+
+  // 计算计划表进度
+  const planProgress = useMemo(() => {
+    if (!isPlan) return null
+    const checkedCount = (html.match(/<input[^>]*checked[^>]*type="checkbox"/g) || []).length
+    const totalCount = (html.match(/<input[^>]*type="checkbox"/g) || []).length
+    if (totalCount === 0) return null
+    return {
+      completed: checkedCount,
+      total: totalCount,
+      percentage: Math.round((checkedCount / totalCount) * 100)
+    }
+  }, [html, isPlan])
+
+  // 是否显示目录
+  const showToc = post?.toc !== false && config.features.showToc && toc.length > 0
 
   return (
     <>
@@ -325,12 +347,12 @@ export default function PostDetail() {
         <div className="reading-progress-bar" style={{ width: `${readingProgress}%` }} />
       )}
       
-      <div className={`post-layout ${isArticle ? 'article-style' : ''}`}>
+      <div className={`post-layout ${isArticle ? 'article-style' : ''} ${isPlan ? 'plan-style' : ''} ${!showToc ? 'no-toc' : ''}`}>
       <div className="post-detail">
         <article className="post-article">
           <div className="post-header">
             <h1 className="post-title">{post.title}</h1>
-            {!isArticle && (
+            {!isArticle && !isPlan && (
               <button 
                 className="export-pdf-btn"
                 onClick={handleExportPDF} 
@@ -346,7 +368,30 @@ export default function PostDetail() {
               </button>
             )}
           </div>
-          {!isArticle && config.features.showTags && post.tags.length > 0 && (
+          
+          {/* 计划表进度条 */}
+          {isPlan && planProgress && (
+            <div className="plan-progress">
+              <div className="plan-progress-header">
+                <span className="plan-progress-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  完成进度
+                </span>
+                <span className="plan-progress-text">{planProgress.completed}/{planProgress.total} ({planProgress.percentage}%)</span>
+              </div>
+              <div className="plan-progress-bar">
+                <div 
+                  className="plan-progress-fill" 
+                  style={{ width: `${planProgress.percentage}%` }}
+                />
+              </div>
+            </div>
+          )}
+          
+          {!isArticle && !isPlan && config.features.showTags && post.tags.length > 0 && (
             <div className="post-meta">
               <div className="post-tags">
                 {post.tags.map(tag => (
@@ -356,14 +401,14 @@ export default function PostDetail() {
             </div>
           )}
 
-          <PostContent html={html} isArticle={isArticle} />
+          <PostContent html={html} isArticle={isArticle} isPlan={isPlan} />
 
           {/* 文章底部 */}
           <PostFooter slug={slug || ''} lastUpdated={post.date} tags={post.tags} />
         </article>
       </div>
 
-      {!isArticle && config.features.showToc && toc.length > 0 && (
+      {showToc && (
         <aside className="post-toc">
           <div className="toc-title">页面导航</div>
           <nav className="toc-nav" ref={tocNavRef}>
