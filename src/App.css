@@ -3244,6 +3244,7 @@ a.article-card {
 
 .app.dark .plan-content li:has(input:checked) {
   color: #6b7280;
+  text-decoration-color: #4b5563;
 }
 
 .app.dark .plan-content li:has(input:checked):hover {
@@ -3267,6 +3268,10 @@ a.article-card {
 .app.dark .plan-content h2 {
   border-top-color: #374151;
   color: #f3f4f6;
+}
+
+.app.dark .plan-content h2::before {
+  background: var(--color-primary-light, var(--color-primary));
 }
 
 .app.dark .plan-content h3 {
