@@ -583,6 +583,11 @@ a.article-card {
 
 /* 无目录时居中显示 */
 .post-layout.no-toc {
+  max-width: 1200px;
+}
+
+/* 散文类型窄版布局 */
+.post-layout.article-style {
   max-width: 800px;
 }
 
