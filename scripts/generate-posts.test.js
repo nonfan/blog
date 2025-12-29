@@ -87,6 +87,42 @@ title: 测试
     expect(frontmatter.title).toBe('测试')
     expect(body).toBe('内容')
   })
+
+  it('应该解析 toc 字段为 true', () => {
+    const content = `---
+toc: true
+---
+内容`
+    const { frontmatter } = parseFrontmatter(content)
+    expect(frontmatter.toc).toBe(true)
+  })
+
+  it('应该解析 toc 字段为 false', () => {
+    const content = `---
+toc: false
+---
+内容`
+    const { frontmatter } = parseFrontmatter(content)
+    expect(frontmatter.toc).toBe(false)
+  })
+
+  it('应该解析 toc 字段大小写不敏感', () => {
+    const content = `---
+toc: FALSE
+---
+内容`
+    const { frontmatter } = parseFrontmatter(content)
+    expect(frontmatter.toc).toBe(false)
+  })
+
+  it('应该解析 type 字段为 plan', () => {
+    const content = `---
+type: plan
+---
+内容`
+    const { frontmatter } = parseFrontmatter(content)
+    expect(frontmatter.type).toBe('plan')
+  })
 })
 
 describe('getTitleFromBody', () => {
