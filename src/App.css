@@ -581,14 +581,24 @@ a.article-card {
   box-sizing: border-box;
 }
 
-/* 无目录时居中显示 */
+/* 无目录时内容居中（保持与有目录时相同的内容宽度） */
 .post-layout.no-toc {
   max-width: 1200px;
+}
+
+.post-layout.no-toc .post-detail {
+  max-width: 920px;
+  margin: 0 auto;
 }
 
 /* 散文类型窄版布局 */
 .post-layout.article-style {
   max-width: 800px;
+}
+
+.post-layout.article-style .post-detail {
+  max-width: 100%;
+  margin: 0;
 }
 
 .post-detail {
