@@ -299,3 +299,159 @@ const { renderer } = createMarkedRenderer()
 marked.use({ renderer })
 
 export { marked }
+
+/**
+ * 代码块保护工具
+ * 用于在预处理时保护代码块内容不被解析
+ * @returns {Object} 包含 protect 和 restore 方法的对象
+ */
+export function createCodeBlockProtector() {
+  const codeBlocks = []
+  const placeholder = '__PROTECTED_CODE_BLOCK_'
+  
+  return {
+    /**
+     * 保护代码块，将其替换为占位符
+     * @param {string} body - 原始内容
+     * @returns {string} - 替换后的内容
+     */
+    protect(body) {
+      // 匹配 ```` ``` 和行内 ` 代码（按长度优先匹配）
+      return body.replace(/````[\s\S]*?````|```[\s\S]*?```|`[^`\n]+`/g, (match) => {
+        codeBlocks.push(match)
+        return `${placeholder}${codeBlocks.length - 1}__`
+      })
+    },
+    
+    /**
+     * 恢复代码块
+     * @param {string} body - 包含占位符的内容
+     * @returns {string} - 恢复后的内容
+     */
+    restore(body) {
+      return body.replace(new RegExp(`${placeholder}(\\d+)__`, 'g'), (_, index) => {
+        return codeBlocks[parseInt(index)]
+      })
+    },
+    
+    /**
+     * 获取已保护的代码块数量
+     * @returns {number}
+     */
+    getCount() {
+      return codeBlocks.length
+    }
+  }
+}
+
+/**
+ * 预处理每日打卡日历语法 :::daily
+ * @param {string} body - Markdown 内容
+ * @returns {string} - 处理后的内容
+ */
+export function preprocessDailyCalendar(body) {
+  // 使用代码块保护器
+  const protector = createCodeBlockProtector()
+  body = protector.protect(body)
+  
+  let calendarCounter = 0
+  const dailyRegex = /^:::\s*daily\s+(.+)\n([\s\S]*?)^:::\s*$/gm
+  
+  body = body.replace(dailyRegex, (match, titleLine, content) => {
+    const calendarTitle = titleLine.trim()
+    if (!calendarTitle) return match
+    
+    const calendarId = `daily-calendar-${calendarCounter++}`
+    const lines = content.trim().split('\n')
+    
+    // 解析日期数据，格式：2025-01: 1,2,3,5,6 或 2025-01: （空）
+    const monthData = {}
+    for (const line of lines) {
+      const lineMatch = line.match(/^(\d{4}-\d{2}):\s*(.*)$/)
+      if (lineMatch) {
+        const [, yearMonth, daysStr] = lineMatch
+        const days = daysStr ? daysStr.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : []
+        monthData[yearMonth] = days
+      }
+    }
+    
+    // 生成日历 HTML
+    const months = Object.keys(monthData).sort()
+    if (months.length === 0) return match
+    
+    let calendarsHtml = ''
+    
+    for (const yearMonth of months) {
+      const [year, month] = yearMonth.split('-').map(Number)
+      const completedDays = new Set(monthData[yearMonth])
+      
+      // 获取该月的天数和第一天是星期几
+      const daysInMonth = new Date(year, month, 0).getDate()
+      const firstDayOfWeek = new Date(year, month - 1, 1).getDay()
+      
+      // 计算完成率
+      const completedCount = completedDays.size
+      const percentage = Math.round((completedCount / daysInMonth) * 100)
+      
+      // 生成日历格子
+      let daysHtml = ''
+      
+      // 填充月初空白
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        daysHtml += '<span class="daily-day empty"></span>'
+      }
+      
+      // 填充日期
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isCompleted = completedDays.has(day)
+        const className = isCompleted ? 'daily-day completed' : 'daily-day'
+        daysHtml += `<span class="${className}" data-day="${day}">${day}</span>`
+      }
+      
+      const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+      
+      calendarsHtml += `
+<div class="daily-month">
+  <div class="daily-month-header">
+    <span class="daily-month-title">${year}年${monthNames[month]}</span>
+    <span class="daily-month-stats">${completedCount}/${daysInMonth} (${percentage}%)</span>
+  </div>
+  <div class="daily-weekdays">
+    <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+  </div>
+  <div class="daily-days">
+    ${daysHtml}
+  </div>
+</div>`
+    }
+    
+    // 计算总完成率
+    const totalDays = months.reduce((sum, ym) => {
+      const [y, m] = ym.split('-').map(Number)
+      return sum + new Date(y, m, 0).getDate()
+    }, 0)
+    const totalCompleted = months.reduce((sum, ym) => sum + monthData[ym].length, 0)
+    const totalPercentage = Math.round((totalCompleted / totalDays) * 100)
+    
+    // 100% 完成时自动勾选
+    const isFullyCompleted = totalPercentage === 100
+    const checkboxHtml = isFullyCompleted
+      ? '<input type="checkbox" checked disabled class="daily-checkbox">'
+      : '<input type="checkbox" disabled class="daily-checkbox">'
+    
+    return `<div class="daily-calendar" id="${calendarId}">
+  <div class="daily-header">
+    <span class="daily-title">${checkboxHtml}${calendarTitle}</span>
+    <span class="daily-total">${totalCompleted}/${totalDays} 天 (${totalPercentage}%)</span>
+  </div>
+  <div class="daily-months">
+    ${calendarsHtml}
+  </div>
+</div>
+
+`
+  })
+  
+  // 恢复代码块
+  return protector.restore(body)
+}

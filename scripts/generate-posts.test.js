@@ -9,7 +9,9 @@ import {
   preprocessContainers,
   generateCodeBlockHeader,
   createMarkedRenderer,
-  marked
+  marked,
+  createCodeBlockProtector,
+  preprocessDailyCalendar
 } from './post-utils.js'
 
 describe('parseFrontmatter', () => {
@@ -609,5 +611,196 @@ describe('generateId 边界情况', () => {
 
   it('应该处理数字', () => {
     expect(generateId('React 18 新特性')).toBe('react-18-新特性')
+  })
+})
+
+
+describe('createCodeBlockProtector', () => {
+  it('应该保护三反引号代码块', () => {
+    const protector = createCodeBlockProtector()
+    const input = '文字\n```js\nconst a = 1\n```\n更多文字'
+    const protected_ = protector.protect(input)
+    
+    expect(protected_).not.toContain('```')
+    expect(protected_).toContain('__PROTECTED_CODE_BLOCK_')
+    expect(protector.getCount()).toBe(1)
+  })
+
+  it('应该保护四反引号代码块', () => {
+    const protector = createCodeBlockProtector()
+    const input = '````md\n```js\ncode\n```\n````'
+    const protected_ = protector.protect(input)
+    
+    expect(protected_).not.toContain('````')
+    expect(protector.getCount()).toBe(1)
+  })
+
+  it('应该保护行内代码', () => {
+    const protector = createCodeBlockProtector()
+    const input = '使用 `const` 和 `let` 声明'
+    const protected_ = protector.protect(input)
+    
+    expect(protected_).not.toContain('`const`')
+    expect(protected_).not.toContain('`let`')
+    expect(protector.getCount()).toBe(2)
+  })
+
+  it('应该正确恢复代码块', () => {
+    const protector = createCodeBlockProtector()
+    const input = '文字\n```js\nconst a = 1\n```\n更多文字'
+    const protected_ = protector.protect(input)
+    const restored = protector.restore(protected_)
+    
+    expect(restored).toBe(input)
+  })
+
+  it('应该正确恢复多个代码块', () => {
+    const protector = createCodeBlockProtector()
+    const input = '```js\na\n```\n文字\n```py\nb\n```'
+    const protected_ = protector.protect(input)
+    const restored = protector.restore(protected_)
+    
+    expect(restored).toBe(input)
+    expect(protector.getCount()).toBe(2)
+  })
+
+  it('应该处理空内容', () => {
+    const protector = createCodeBlockProtector()
+    const protected_ = protector.protect('')
+    const restored = protector.restore(protected_)
+    
+    expect(restored).toBe('')
+    expect(protector.getCount()).toBe(0)
+  })
+})
+
+describe('preprocessDailyCalendar', () => {
+  it('应该解析基本的日历语法', () => {
+    const input = `:::daily 每日英语
+2026-01: 1,2,3
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('class="daily-calendar"')
+    expect(result).toContain('每日英语')
+    expect(result).toContain('2026年1月')
+  })
+
+  it('应该正确计算完成天数', () => {
+    const input = `:::daily 测试任务
+2026-01: 1,2,3,4,5
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('5/31')
+  })
+
+  it('应该支持空月份', () => {
+    const input = `:::daily 测试任务
+2026-01:
+2026-02:
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('2026年1月')
+    expect(result).toContain('2026年2月')
+    expect(result).toContain('0/31')
+    expect(result).toContain('0/28')
+  })
+
+  it('应该在100%完成时自动勾选', () => {
+    // 2026年2月有28天
+    const allDays = Array.from({ length: 28 }, (_, i) => i + 1).join(',')
+    const input = `:::daily 测试任务
+2026-02: ${allDays}
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('checked')
+    expect(result).toContain('28/28')
+    expect(result).toContain('100%')
+  })
+
+  it('未完成时不应该勾选', () => {
+    const input = `:::daily 测试任务
+2026-01: 1,2,3
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('<input type="checkbox" disabled class="daily-checkbox">')
+    expect(result).not.toContain('checked')
+  })
+
+  it('应该保护代码块内的语法不被解析', () => {
+    const input = `\`\`\`markdown
+:::daily 示例任务
+2026-01: 1,2,3
+:::
+\`\`\``
+    const result = preprocessDailyCalendar(input)
+    
+    // 代码块内的内容应该保持原样
+    expect(result).toContain(':::daily 示例任务')
+    expect(result).not.toContain('class="daily-calendar"')
+  })
+
+  it('应该处理多个日历', () => {
+    const input = `:::daily 任务1
+2026-01: 1,2
+:::
+
+:::daily 任务2
+2026-02: 3,4
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('任务1')
+    expect(result).toContain('任务2')
+    expect(result).toContain('id="daily-calendar-0"')
+    expect(result).toContain('id="daily-calendar-1"')
+  })
+
+  it('应该正确标记完成的日期', () => {
+    const input = `:::daily 测试
+2026-01: 1,15,31
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('class="daily-day completed" data-day="1"')
+    expect(result).toContain('class="daily-day completed" data-day="15"')
+    expect(result).toContain('class="daily-day completed" data-day="31"')
+    expect(result).toContain('class="daily-day" data-day="2"')
+  })
+
+  it('应该生成正确的星期标题', () => {
+    const input = `:::daily 测试
+2026-01: 1
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toContain('<span>日</span>')
+    expect(result).toContain('<span>一</span>')
+    expect(result).toContain('<span>六</span>')
+  })
+
+  it('没有有效月份数据时应该返回原内容', () => {
+    const input = `:::daily 测试
+无效数据
+:::`
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).toBe(input)
+  })
+
+  it('应该处理四反引号代码块', () => {
+    const input = `\`\`\`\`md
+:::daily 示例
+2026-01: 1
+:::
+\`\`\`\``
+    const result = preprocessDailyCalendar(input)
+    
+    expect(result).not.toContain('class="daily-calendar"')
+    expect(result).toContain(':::daily 示例')
   })
 })
