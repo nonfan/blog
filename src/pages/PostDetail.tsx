@@ -327,8 +327,10 @@ export default function PostDetail() {
   // 计算计划表进度
   const planProgress = useMemo(() => {
     if (!isPlan) return null
-    const checkedCount = (html.match(/<input[^>]*checked[^>]*type="checkbox"/g) || []).length
-    const totalCount = (html.match(/<input[^>]*type="checkbox"/g) || []).length
+    // 统计所有 checkbox（包括日历组件的）
+    const allCheckboxes = html.match(/<input[^>]*type="checkbox"[^>]*>/g) || []
+    const checkedCount = allCheckboxes.filter(cb => cb.includes('checked')).length
+    const totalCount = allCheckboxes.length
     if (totalCount === 0) return null
     return {
       completed: checkedCount,
