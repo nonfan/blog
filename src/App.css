@@ -3306,6 +3306,39 @@ a.article-card {
   font-size: 16px;
   font-weight: 600;
   color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.daily-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background: #fff;
+  cursor: default;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.daily-checkbox:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.daily-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .daily-total {
@@ -3402,6 +3435,16 @@ a.article-card {
 
 .app.dark .daily-title {
   color: #f3f4f6;
+}
+
+.app.dark .daily-checkbox {
+  border-color: #4b5563;
+  background: #1f2937;
+}
+
+.app.dark .daily-checkbox:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .app.dark .daily-total {

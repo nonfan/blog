@@ -313,22 +313,31 @@ let dailyCalendarCounter = 0
 
 // 预处理每日打卡日历语法 :::daily
 function preprocessDailyCalendar(body) {
-  const dailyRegex = /^:::\s*daily(?:[ \t]+([^\n]*))?\n([\s\S]*?)^:::\s*$/gm
+  const dailyRegex = /^:::\s*daily\s*\n([\s\S]*?)^:::\s*$/gm
   
-  return body.replace(dailyRegex, (match, title, content) => {
-    const calendarTitle = title?.trim() || '每日打卡'
+  return body.replace(dailyRegex, (match, content) => {
+    const lines = content.trim().split('\n')
+    
+    // 第一行是任务标题（支持 - [ ] 或 - [x] 格式）
+    const titleLine = lines[0]
+    const titleMatch = titleLine.match(/^-\s*\[([ x])\]\s*(.+)$/)
+    if (!titleMatch) return match
+    
+    const isTaskCompleted = titleMatch[1] === 'x'
+    const calendarTitle = titleMatch[2].trim()
     const calendarId = `daily-calendar-${dailyCalendarCounter++}`
     
     // 解析日期数据，格式：2025-01: 1,2,3,5,6
     const monthData = {}
-    content.trim().split('\n').forEach(line => {
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i]
       const lineMatch = line.match(/^(\d{4}-\d{2}):\s*(.+)$/)
       if (lineMatch) {
         const [, yearMonth, daysStr] = lineMatch
         const days = daysStr.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d))
         monthData[yearMonth] = days
       }
-    })
+    }
     
     // 生成日历 HTML
     const months = Object.keys(monthData).sort()
@@ -388,9 +397,14 @@ function preprocessDailyCalendar(body) {
     const totalCompleted = months.reduce((sum, ym) => sum + monthData[ym].length, 0)
     const totalPercentage = Math.round((totalCompleted / totalDays) * 100)
     
+    // 任务完成状态的 checkbox
+    const checkboxHtml = isTaskCompleted 
+      ? '<input type="checkbox" checked disabled class="daily-checkbox">'
+      : '<input type="checkbox" disabled class="daily-checkbox">'
+    
     return `<div class="daily-calendar" id="${calendarId}">
   <div class="daily-header">
-    <span class="daily-title">${calendarTitle}</span>
+    <span class="daily-title">${checkboxHtml}${calendarTitle}</span>
     <span class="daily-total">${totalCompleted}/${totalDays} 天 (${totalPercentage}%)</span>
   </div>
   <div class="daily-months">
