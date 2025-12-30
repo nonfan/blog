@@ -308,6 +308,100 @@ ${innerContent}
 // 代码组计数器
 let codeGroupCounter = 0
 
+// 每日打卡日历计数器
+let dailyCalendarCounter = 0
+
+// 预处理每日打卡日历语法 :::daily
+function preprocessDailyCalendar(body) {
+  const dailyRegex = /^:::\s*daily(?:[ \t]+([^\n]*))?\n([\s\S]*?)^:::\s*$/gm
+  
+  return body.replace(dailyRegex, (match, title, content) => {
+    const calendarTitle = title?.trim() || '每日打卡'
+    const calendarId = `daily-calendar-${dailyCalendarCounter++}`
+    
+    // 解析日期数据，格式：2025-01: 1,2,3,5,6
+    const monthData = {}
+    content.trim().split('\n').forEach(line => {
+      const lineMatch = line.match(/^(\d{4}-\d{2}):\s*(.+)$/)
+      if (lineMatch) {
+        const [, yearMonth, daysStr] = lineMatch
+        const days = daysStr.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d))
+        monthData[yearMonth] = days
+      }
+    })
+    
+    // 生成日历 HTML
+    const months = Object.keys(monthData).sort()
+    if (months.length === 0) return match
+    
+    let calendarsHtml = ''
+    
+    for (const yearMonth of months) {
+      const [year, month] = yearMonth.split('-').map(Number)
+      const completedDays = new Set(monthData[yearMonth])
+      
+      // 获取该月的天数和第一天是星期几
+      const daysInMonth = new Date(year, month, 0).getDate()
+      const firstDayOfWeek = new Date(year, month - 1, 1).getDay()
+      
+      // 计算完成率
+      const completedCount = completedDays.size
+      const percentage = Math.round((completedCount / daysInMonth) * 100)
+      
+      // 生成日历格子
+      let daysHtml = ''
+      
+      // 填充月初空白
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        daysHtml += '<span class="daily-day empty"></span>'
+      }
+      
+      // 填充日期
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isCompleted = completedDays.has(day)
+        const className = isCompleted ? 'daily-day completed' : 'daily-day'
+        daysHtml += `<span class="${className}" data-day="${day}">${day}</span>`
+      }
+      
+      const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+      
+      calendarsHtml += `
+<div class="daily-month">
+  <div class="daily-month-header">
+    <span class="daily-month-title">${year}年${monthNames[month]}</span>
+    <span class="daily-month-stats">${completedCount}/${daysInMonth} (${percentage}%)</span>
+  </div>
+  <div class="daily-weekdays">
+    <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+  </div>
+  <div class="daily-days">
+    ${daysHtml}
+  </div>
+</div>`
+    }
+    
+    // 计算总完成率
+    const totalDays = months.reduce((sum, ym) => {
+      const [y, m] = ym.split('-').map(Number)
+      return sum + new Date(y, m, 0).getDate()
+    }, 0)
+    const totalCompleted = months.reduce((sum, ym) => sum + monthData[ym].length, 0)
+    const totalPercentage = Math.round((totalCompleted / totalDays) * 100)
+    
+    return `<div class="daily-calendar" id="${calendarId}">
+  <div class="daily-header">
+    <span class="daily-title">${calendarTitle}</span>
+    <span class="daily-total">${totalCompleted}/${totalDays} 天 (${totalPercentage}%)</span>
+  </div>
+  <div class="daily-months">
+    ${calendarsHtml}
+  </div>
+</div>
+
+`
+  })
+}
+
 // 预处理代码组语法 ::: code-group
 function preprocessCodeGroups(body) {
   const codeGroupRegex = /^:::\s*code-group\s*\n([\s\S]*?)^:::\s*$/gm
@@ -382,11 +476,14 @@ async function renderMarkdown(body) {
   currentIdCounts = new Map()
   currentCodeBlocks = []
   codeGroupCounter = 0
+  dailyCalendarCounter = 0
 
   // 预处理数学公式（必须在其他处理之前）
   let processedBody = preprocessMath(body)
   // 预处理代码组（必须在容器之前）
   processedBody = preprocessCodeGroups(processedBody)
+  // 预处理每日打卡日历
+  processedBody = preprocessDailyCalendar(processedBody)
   // 预处理自定义容器
   processedBody = preprocessContainers(processedBody)
 
