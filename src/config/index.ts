@@ -45,7 +45,7 @@ export interface BlogConfig {
 }
 
 // 标准化 base URL（确保以 / 开头，不以 / 结尾，根目录为空字符串）
-function normalizeBase(base?: string): string {
+export function normalizeBase(base?: string): string {
   if (!base || base === '/') return ''
   let normalized = base
   // 确保以 / 开头
@@ -59,7 +59,7 @@ function normalizeBase(base?: string): string {
 export const baseUrl = import.meta.env.DEV ? '' : normalizeBase(blogConfig.site?.baseUrl)
 
 // 处理资源路径，自动拼接 baseUrl
-function formatAssetPath(path?: string): string | undefined {
+export function formatAssetPath(path?: string): string | undefined {
   if (!path) return undefined
   if (path.startsWith('http')) return path
   // 确保路径以 / 开头
@@ -68,7 +68,7 @@ function formatAssetPath(path?: string): string | undefined {
 }
 
 // 标准化 GitHub repo 路径（移除开头和结尾的 /）
-function normalizeRepo(repo?: string): string {
+export function normalizeRepo(repo?: string): string {
   if (!repo) return ''
   return repo.replace(/^\/+|\/+$/g, '')
 }

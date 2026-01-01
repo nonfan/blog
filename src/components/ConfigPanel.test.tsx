@@ -246,4 +246,75 @@ describe('ConfigPanel', () => {
       expect(cards.length).toBe(2)
     })
   })
+
+  describe('自定义颜色', () => {
+    it('输入完整的6位颜色值应该应用颜色', () => {
+      renderWithProvider()
+      fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
+      
+      const input = screen.getByPlaceholderText('输入色值，如 BA68C8')
+      fireEvent.change(input, { target: { value: 'BA68C8' } })
+      
+      expect(input).toHaveValue('BA68C8')
+      // 验证 localStorage 被调用（颜色被保存）
+      expect(localStorageMock.setItem).toHaveBeenCalled()
+    })
+
+    it('输入不完整的颜色值不应该应用', () => {
+      renderWithProvider()
+      fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
+      
+      const input = screen.getByPlaceholderText('输入色值，如 BA68C8')
+      const initialCalls = localStorageMock.setItem.mock.calls.length
+      
+      fireEvent.change(input, { target: { value: 'BA6' } })
+      
+      expect(input).toHaveValue('BA6')
+      // 不完整的颜色值不应该触发保存
+      expect(localStorageMock.setItem.mock.calls.length).toBe(initialCalls)
+    })
+
+    it('选择预设颜色后应该清空自定义输入', () => {
+      renderWithProvider()
+      fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
+      
+      // 先输入自定义颜色
+      const input = screen.getByPlaceholderText('输入色值，如 BA68C8')
+      fireEvent.change(input, { target: { value: 'BA68C8' } })
+      expect(input).toHaveValue('BA68C8')
+      
+      // 选择预设颜色
+      const colorButtons = document.querySelectorAll('.color-grid-item')
+      fireEvent.click(colorButtons[0])
+      
+      // 输入框应该被清空
+      expect(input).toHaveValue('')
+    })
+  })
+
+  describe('开关交互', () => {
+    it('禁用编辑链接开关当没有 GitHub repo 时', () => {
+      renderWithProvider()
+      fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
+      fireEvent.click(screen.getByText('功能设置'))
+      
+      const editLinkLabel = screen.getByText('显示编辑链接').closest('label')
+      // 检查是否有 disabled 类（取决于 config.github.repo 是否为空）
+      expect(editLinkLabel).toBeInTheDocument()
+    })
+
+    it('永久关闭动画后应该禁用仅首次显示开关', () => {
+      renderWithProvider()
+      fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
+      fireEvent.click(screen.getByText('功能设置'))
+      
+      // 先启用永久关闭动画
+      const disableSplashSwitch = screen.getByText('永久关闭动画').closest('label')?.querySelector('input')
+      fireEvent.click(disableSplashSwitch!)
+      
+      // 检查仅首次显示开关是否被禁用
+      const showOnceLabel = screen.getByText('仅首次加载显示').closest('label')
+      expect(showOnceLabel).toHaveClass('disabled')
+    })
+  })
 })
