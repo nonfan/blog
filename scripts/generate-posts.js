@@ -380,8 +380,11 @@ async function renderMarkdown(body) {
   currentCodeBlocks = []
   codeGroupCounter = 0
 
+  // 预处理空的任务列表项，自动填充"待规划..."
+  let processedBody = body.replace(/^(\s*)-\s*\[\s*\]\s*$/gm, '$1- [ ] 待规划...')
+  
   // 预处理数学公式（必须在其他处理之前）
-  let processedBody = preprocessMath(body)
+  processedBody = preprocessMath(processedBody)
   // 预处理代码组（必须在容器之前）
   processedBody = preprocessCodeGroups(processedBody)
   // 预处理每日打卡日历
@@ -447,6 +450,10 @@ async function renderMarkdown(body) {
       html = html.replace(block.placeholder, `<pre><code>${block.code}</code></pre>`)
     }
   }
+  
+  // 处理空的 checkbox 列表项，自动填充"待规划..."
+  html = html.replace(/<li>(<input[^>]*type="checkbox"[^>]*>)\s*<\/li>/g, 
+    '<li class="placeholder-task">$1待规划...</li>')
   
   // 处理占位任务（"待规划..."）添加特殊样式
   html = html.replace(/<li>(<input[^>]*type="checkbox"[^>]*>)\s*待规划[.。…]*<\/li>/g, 
