@@ -284,34 +284,34 @@ export default function ConfigPanel() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
             />
             
             <motion.div 
               className="config-sidebar-panel"
               initial={{ 
                 opacity: 0, 
-                scale: 0.8,
-                x: 100,
-                borderRadius: '24px'
+                scale: 0.92,
+                x: 40,
               }}
               animate={{ 
                 opacity: 1, 
                 scale: 1,
                 x: 0,
-                borderRadius: '0px'
               }}
               exit={{ 
                 opacity: 0, 
-                scale: 0.85,
-                x: 80,
-                borderRadius: '24px'
+                scale: 0.92,
+                x: 40,
               }}
               transition={{ 
                 type: 'spring',
-                stiffness: 400,
-                damping: 30,
-                mass: 0.8
+                stiffness: 500,
+                damping: 35,
+                mass: 1,
+                // 更接近 macOS 的 CASpringAnimation
+                restDelta: 0.001,
+                restSpeed: 0.001,
               }}
             >
               {/* 左侧菜单 */}
