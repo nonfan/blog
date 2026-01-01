@@ -235,3 +235,127 @@
   background: rgba(101, 117, 133, 0.32);
   color: #c9def1;
 }
+
+
+/* ========== 代码主题切换 ========== */
+
+/* GitHub 主题 - 浅色 */
+[data-code-theme="github"] .code-block-wrapper {
+  background: #f6f8fa;
+  border-color: #d0d7de;
+}
+
+[data-code-theme="github"] .code-header {
+  background: #f6f8fa;
+  border-bottom-color: #d0d7de;
+}
+
+[data-code-theme="github"] .code-block pre,
+[data-code-theme="github"] .code-block {
+  background: #f6f8fa !important;
+}
+
+/* GitHub 主题 - 深色 */
+[data-code-theme="github"].dark .code-block-wrapper,
+.app.dark [data-code-theme="github"] .code-block-wrapper {
+  background: #0d1117;
+  border-color: #30363d;
+}
+
+.app.dark [data-code-theme="github"] .code-header {
+  background: #161b22;
+  border-bottom-color: #30363d;
+}
+
+.app.dark [data-code-theme="github"] .code-block pre,
+.app.dark [data-code-theme="github"] .code-block {
+  background: #0d1117 !important;
+}
+
+/* Dracula 主题 */
+[data-code-theme="dracula"] .code-block-wrapper {
+  background: #282a36;
+  border-color: #44475a;
+}
+
+[data-code-theme="dracula"] .code-header {
+  background: #21222c;
+  border-bottom-color: #44475a;
+}
+
+[data-code-theme="dracula"] .code-title {
+  color: #f8f8f2;
+}
+
+[data-code-theme="dracula"] .code-lang {
+  color: #6272a4;
+}
+
+[data-code-theme="dracula"] .code-block pre,
+[data-code-theme="dracula"] .code-block {
+  background: #282a36 !important;
+}
+
+[data-code-theme="dracula"] .code-copy {
+  background: rgba(40, 42, 54, 0.9);
+  border-color: #44475a;
+  color: #f8f8f2;
+}
+
+/* Dracula 深色模式保持一致 */
+.app.dark [data-code-theme="dracula"] .code-block-wrapper {
+  background: #282a36;
+  border-color: #44475a;
+}
+
+.app.dark [data-code-theme="dracula"] .code-header {
+  background: #21222c;
+  border-bottom-color: #44475a;
+}
+
+.app.dark [data-code-theme="dracula"] .code-block pre,
+.app.dark [data-code-theme="dracula"] .code-block {
+  background: #282a36 !important;
+}
+
+/* Nord 主题 - 浅色 */
+[data-code-theme="nord"] .code-block-wrapper {
+  background: #eceff4;
+  border-color: #d8dee9;
+}
+
+[data-code-theme="nord"] .code-header {
+  background: #e5e9f0;
+  border-bottom-color: #d8dee9;
+}
+
+[data-code-theme="nord"] .code-block pre,
+[data-code-theme="nord"] .code-block {
+  background: #eceff4 !important;
+}
+
+/* Nord 主题 - 深色 */
+.app.dark [data-code-theme="nord"] .code-block-wrapper {
+  background: #2e3440;
+  border-color: #3b4252;
+}
+
+.app.dark [data-code-theme="nord"] .code-header {
+  background: #3b4252;
+  border-bottom-color: #434c5e;
+}
+
+.app.dark [data-code-theme="nord"] .code-title {
+  color: #eceff4;
+}
+
+.app.dark [data-code-theme="nord"] .code-block pre,
+.app.dark [data-code-theme="nord"] .code-block {
+  background: #2e3440 !important;
+}
+
+.app.dark [data-code-theme="nord"] .code-copy {
+  background: rgba(46, 52, 64, 0.9);
+  border-color: #434c5e;
+  color: #d8dee9;
+}
