@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import ConfigPanel from '../components/ConfigPanel'
 import { ConfigProvider } from '../config/ConfigContext'
 
@@ -64,7 +64,7 @@ describe('ConfigPanel', () => {
       expect(screen.getByText('重置设置')).toBeInTheDocument()
     })
 
-    it('点击遮罩层应该关闭面板', () => {
+    it('点击遮罩层应该关闭面板', async () => {
       renderWithProvider()
       fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
       
@@ -72,7 +72,11 @@ describe('ConfigPanel', () => {
       expect(overlay).toBeInTheDocument()
       
       fireEvent.click(overlay!)
-      expect(screen.queryByText('功能设置')).not.toBeInTheDocument()
+      
+      // 等待 AnimatePresence 退出动画完成
+      await waitFor(() => {
+        expect(screen.queryByText('功能设置')).not.toBeInTheDocument()
+      }, { timeout: 1000 })
     })
   })
 

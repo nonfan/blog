@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useConfig } from '../config/ConfigContext'
 import './ConfigPanel.css'
 
@@ -72,6 +73,7 @@ export default function ConfigPanel() {
   const [activeMenu, setActiveMenu] = useState('theme')
   const [customColorInput, setCustomColorInput] = useState('')
   const colorPickerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const { config, updateThemeColor, updateFeature, resetConfig } = useConfig()
 
   // 检查是否是预设颜色
@@ -261,6 +263,7 @@ export default function ConfigPanel() {
     <>
       {/* 设置按钮 */}
       <button
+        ref={buttonRef}
         className="config-toggle-btn"
         onClick={() => setIsOpen(true)}
         aria-label="打开设置"
@@ -272,56 +275,91 @@ export default function ConfigPanel() {
       </button>
 
       {/* 侧边设置面板 */}
-      {isOpen && (
-        <>
-          <div className="config-overlay" onClick={() => setIsOpen(false)} />
-          
-          <div className="config-sidebar-panel">
-            {/* 左侧菜单 */}
-            <div className="config-sidebar-left">
-              {/* 用户信息 */}
-              <div className="config-sidebar-user">
-                <div className="user-avatar">
-                  {config.site.logo ? (
-                    <img src={config.site.logo} alt="avatar" />
-                  ) : (
-                    <img src="/logo.svg" alt="avatar" />
-                  )}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div 
+              className="config-overlay" 
+              onClick={() => setIsOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+            
+            <motion.div 
+              className="config-sidebar-panel"
+              initial={{ 
+                opacity: 0, 
+                scale: 0.8,
+                x: 100,
+                borderRadius: '24px'
+              }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1,
+                x: 0,
+                borderRadius: '0px'
+              }}
+              exit={{ 
+                opacity: 0, 
+                scale: 0.85,
+                x: 80,
+                borderRadius: '24px'
+              }}
+              transition={{ 
+                type: 'spring',
+                stiffness: 400,
+                damping: 30,
+                mass: 0.8
+              }}
+            >
+              {/* 左侧菜单 */}
+              <div className="config-sidebar-left">
+                {/* 用户信息 */}
+                <div className="config-sidebar-user">
+                  <div className="user-avatar">
+                    {config.site.logo ? (
+                      <img src={config.site.logo} alt="avatar" />
+                    ) : (
+                      <img src="/logo.svg" alt="avatar" />
+                    )}
+                  </div>
+                  <span className="user-name">{config.site.title || 'Blog'}</span>
                 </div>
-                <span className="user-name">{config.site.title || 'Blog'}</span>
+
+                {/* 菜单列表 */}
+                <nav className="config-sidebar-nav">
+                  {menuItems.map(item => (
+                    <button
+                      key={item.id}
+                      className={`config-sidebar-nav-item ${activeMenu === item.id ? 'active' : ''} ${item.id === 'reset' ? 'reset-item' : ''}`}
+                      onClick={() => handleMenuClick(item.id)}
+                    >
+                      <MenuIcon name={item.icon} />
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </nav>
               </div>
 
-              {/* 菜单列表 */}
-              <nav className="config-sidebar-nav">
-                {menuItems.map(item => (
-                  <button
-                    key={item.id}
-                    className={`config-sidebar-nav-item ${activeMenu === item.id ? 'active' : ''} ${item.id === 'reset' ? 'reset-item' : ''}`}
-                    onClick={() => handleMenuClick(item.id)}
-                  >
-                    <MenuIcon name={item.icon} />
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-
-            {/* 右侧区域 */}
-            <div className="config-sidebar-right">
-              {/* 顶部标题 */}
-              <div className="config-sidebar-header">
-                <div className="header-title">{activeMenu === 'theme' ? '主题/壁纸' : '功能设置'}</div>
-                <div className="header-subtitle">{activeMenu === 'theme' ? '深色模式、主题色' : '显示与动画设置'}</div>
+              {/* 右侧区域 */}
+              <div className="config-sidebar-right">
+                {/* 顶部标题 */}
+                <div className="config-sidebar-header">
+                  <div className="header-title">{activeMenu === 'theme' ? '主题/壁纸' : '功能设置'}</div>
+                  <div className="header-subtitle">{activeMenu === 'theme' ? '深色模式、主题色' : '显示与动画设置'}</div>
+                </div>
+                
+                {/* 内容区 */}
+                <div className="config-sidebar-main">
+                  {renderContent()}
+                </div>
               </div>
-              
-              {/* 内容区 */}
-              <div className="config-sidebar-main">
-                {renderContent()}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   )
 }
