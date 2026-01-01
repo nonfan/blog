@@ -91,24 +91,10 @@ export default function ConfigPanel() {
     return () => document.body.classList.remove('config-open')
   }, [isOpen])
 
-  // 打开动画
+  // 打开动画 - 从右侧滑入
   const animateOpen = useCallback(() => {
-    if (!panelRef.current || !overlayRef.current || !buttonRef.current) return
+    if (!panelRef.current || !overlayRef.current) return
 
-    const btn = buttonRef.current.getBoundingClientRect()
-    const panel = panelRef.current
-    
-    // 计算按钮中心相对于面板的位置
-    const panelRect = panel.getBoundingClientRect()
-    const originX = ((btn.left + btn.width / 2) - panelRect.left) / panelRect.width * 100
-    const originY = ((btn.top + btn.height / 2) - panelRect.top) / panelRect.height * 100
-    
-    // 设置 transform-origin 为按钮位置
-    gsap.set(panel, { 
-      transformOrigin: `${originX}% ${originY}%`
-    })
-
-    // 创建时间线
     const tl = gsap.timeline()
     
     // 遮罩层淡入
@@ -116,32 +102,30 @@ export default function ConfigPanel() {
       { opacity: 0 },
       { 
         opacity: 1, 
-        duration: 0.3,
+        duration: 0.35,
         ease: 'power2.out'
       }
     )
     
-    // 面板从按钮位置展开 - macOS 风格
-    tl.fromTo(panel,
+    // 面板从右侧滑入 - macOS 风格
+    tl.fromTo(panelRef.current,
       { 
-        scale: 0.1,
-        opacity: 0,
-        borderRadius: '50%',
+        x: '100%',
+        opacity: 0.8,
       },
       { 
-        scale: 1,
+        x: '0%',
         opacity: 1,
-        borderRadius: '0px',
-        duration: 0.5,
+        duration: 0.45,
         ease: 'power3.out',
       },
-      '-=0.25'
+      '-=0.3'
     )
 
     timelineRef.current = tl
   }, [])
 
-  // 关闭动画
+  // 关闭动画 - 滑出到右侧
   const animateClose = useCallback(() => {
     if (!panelRef.current || !overlayRef.current) return
 
@@ -152,11 +136,10 @@ export default function ConfigPanel() {
       }
     })
 
-    // 面板缩回
+    // 面板滑出
     tl.to(panelRef.current, {
-      scale: 0.1,
-      opacity: 0,
-      borderRadius: '50%',
+      x: '100%',
+      opacity: 0.8,
       duration: 0.35,
       ease: 'power3.in',
     })
@@ -164,9 +147,9 @@ export default function ConfigPanel() {
     // 遮罩层淡出
     tl.to(overlayRef.current, {
       opacity: 0,
-      duration: 0.2,
+      duration: 0.25,
       ease: 'power2.in'
-    }, '-=0.2')
+    }, '-=0.25')
 
     timelineRef.current = tl
   }, [])
@@ -380,7 +363,7 @@ export default function ConfigPanel() {
           <div 
             ref={panelRef}
             className="config-sidebar-panel"
-            style={{ opacity: 0, scale: 0.1 }}
+            style={{ opacity: 0.8, transform: 'translateX(100%)' }}
           >
             {/* 左侧菜单 */}
             <div className="config-sidebar-left">
