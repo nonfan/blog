@@ -13,7 +13,6 @@ interface ConfigContextType {
   updateThemeColor: (color: string) => void
   updateFeature: (key: keyof BlogConfig['features'], value: boolean) => void
   updateReading: <K extends keyof BlogConfig['reading']>(key: K, value: BlogConfig['reading'][K]) => void
-  updateLayout: <K extends keyof BlogConfig['layout']>(key: K, value: BlogConfig['layout'][K]) => void
   resetConfig: () => void
 }
 
@@ -23,7 +22,6 @@ const ConfigContext = createContext<ConfigContextType>({
   updateThemeColor: () => {},
   updateFeature: () => {},
   updateReading: () => {},
-  updateLayout: () => {},
   resetConfig: () => {},
 })
 
@@ -55,9 +53,6 @@ function applyReadingSettings(reading: BlogConfig['reading']) {
     mono: '"SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   }
   root.style.setProperty('--font-family-content', fontFamilyMap[reading.fontFamily])
-  
-  // 代码主题 class
-  root.dataset.codeTheme = reading.codeTheme
 }
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
@@ -115,17 +110,6 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  const updateLayout = <K extends keyof BlogConfig['layout']>(key: K, value: BlogConfig['layout'][K]) => {
-    setConfig(prev => {
-      const newConfig = {
-        ...prev,
-        layout: { ...prev.layout, [key]: value },
-      }
-      saveConfig(newConfig)
-      return newConfig
-    })
-  }
-
   const resetConfig = () => {
     setConfig(defaultConfig)
     saveConfig(defaultConfig)
@@ -135,7 +119,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
 
   return (
     <ConfigContext.Provider
-      value={{ config, updateConfig, updateThemeColor, updateFeature, updateReading, updateLayout, resetConfig }}
+      value={{ config, updateConfig, updateThemeColor, updateFeature, updateReading, resetConfig }}
     >
       {children}
     </ConfigContext.Provider>

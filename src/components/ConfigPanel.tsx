@@ -38,20 +38,6 @@ const fontFamilyOptions: { value: 'sans' | 'serif' | 'mono'; label: string }[] =
   { value: 'mono', label: '等宽' },
 ]
 
-// 代码主题选项
-const codeThemeOptions: { value: 'default' | 'github' | 'dracula' | 'nord'; label: string }[] = [
-  { value: 'default', label: '默认' },
-  { value: 'github', label: 'GitHub' },
-  { value: 'dracula', label: 'Dracula' },
-  { value: 'nord', label: 'Nord' },
-]
-
-// 列表视图选项
-const listViewOptions: { value: 'card' | 'list'; label: string }[] = [
-  { value: 'card', label: '卡片' },
-  { value: 'list', label: '列表' },
-]
-
 // 图标组件
 function MenuIcon({ name }: { name: string }) {
   switch (name) {
@@ -104,7 +90,7 @@ export default function ConfigPanel() {
   const overlayRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   
-  const { config, updateThemeColor, updateFeature, updateReading, updateLayout, resetConfig } = useConfig()
+  const { config, updateThemeColor, updateFeature, updateReading, resetConfig } = useConfig()
 
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
@@ -302,38 +288,6 @@ export default function ConfigPanel() {
                       key={opt.value}
                       className={`config-option-btn ${config.reading.fontFamily === opt.value ? 'active' : ''}`}
                       onClick={() => updateReading('fontFamily', opt.value)}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="config-sidebar-section">
-                <div className="config-sidebar-section-title">代码主题</div>
-                <div className="config-option-group">
-                  {codeThemeOptions.map(opt => (
-                    <button
-                      key={opt.value}
-                      className={`config-option-btn ${config.reading.codeTheme === opt.value ? 'active' : ''}`}
-                      onClick={() => updateReading('codeTheme', opt.value)}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="config-sidebar-card">
-              <div className="config-sidebar-section">
-                <div className="config-sidebar-section-title">文章列表</div>
-                <div className="config-option-group">
-                  {listViewOptions.map(opt => (
-                    <button
-                      key={opt.value}
-                      className={`config-option-btn ${config.layout.postListView === opt.value ? 'active' : ''}`}
-                      onClick={() => updateLayout('postListView', opt.value)}
                     >
                       {opt.label}
                     </button>

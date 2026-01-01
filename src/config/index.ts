@@ -19,12 +19,6 @@ export interface BlogConfig {
   reading: {
     fontSize: 'small' | 'medium' | 'large' // 字体大小
     fontFamily: 'sans' | 'serif' | 'mono' // 字体类型
-    codeTheme: 'default' | 'github' | 'dracula' | 'nord' // 代码块主题
-  }
-
-  // 列表布局
-  layout: {
-    postListView: 'card' | 'list' // 文章列表视图
   }
 
   // 功能开关
@@ -99,10 +93,6 @@ export const defaultConfig: BlogConfig = {
   reading: {
     fontSize: 'medium',
     fontFamily: 'sans',
-    codeTheme: 'default',
-  },
-  layout: {
-    postListView: 'card',
   },
   features: {
     showEditLink: blogConfig.features?.showEditLink ?? true,
@@ -184,10 +174,6 @@ export function loadConfig(): BlogConfig {
         reading: {
           ...defaultConfig.reading,
           ...parsed.reading,
-        },
-        layout: {
-          ...defaultConfig.layout,
-          ...parsed.layout,
         },
         features: {
           ...defaultConfig.features,
