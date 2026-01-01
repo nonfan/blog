@@ -72,9 +72,23 @@ export default function ConfigPanel() {
   const [isOpen, setIsOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState('theme')
   const [customColorInput, setCustomColorInput] = useState('')
+  const [originPoint, setOriginPoint] = useState({ x: 0, y: 0 })
   const colorPickerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { config, updateThemeColor, updateFeature, resetConfig } = useConfig()
+
+  // 打开面板时记录按钮位置
+  const handleOpen = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      // 计算按钮中心点相对于视口的位置
+      setOriginPoint({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      })
+    }
+    setIsOpen(true)
+  }
 
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
@@ -265,7 +279,7 @@ export default function ConfigPanel() {
       <button
         ref={buttonRef}
         className="config-toggle-btn"
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         aria-label="打开设置"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -289,29 +303,31 @@ export default function ConfigPanel() {
             
             <motion.div 
               className="config-sidebar-panel"
+              style={{
+                // 动态设置 transform-origin 为按钮位置
+                transformOrigin: `${originPoint.x}px ${originPoint.y}px`
+              }}
               initial={{ 
                 opacity: 0, 
-                scale: 0.92,
-                x: 40,
+                scale: 0.3,
+                borderRadius: '24px',
               }}
               animate={{ 
                 opacity: 1, 
                 scale: 1,
-                x: 0,
+                borderRadius: '0px',
               }}
               exit={{ 
                 opacity: 0, 
-                scale: 0.92,
-                x: 40,
+                scale: 0.3,
+                borderRadius: '24px',
               }}
               transition={{ 
                 type: 'spring',
-                stiffness: 500,
-                damping: 35,
-                mass: 1,
-                // 更接近 macOS 的 CASpringAnimation
+                stiffness: 400,
+                damping: 30,
+                mass: 0.8,
                 restDelta: 0.001,
-                restSpeed: 0.001,
               }}
             >
               {/* 左侧菜单 */}
