@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import gsap from 'gsap'
 import { useConfig } from '../config/ConfigContext'
 import './ConfigPanel.css'
 
@@ -42,20 +42,6 @@ function MenuIcon({ name }: { name: string }) {
           <circle cx="17" cy="12" r="3" fill="currentColor"/>
         </svg>
       )
-    case 'sparkle':
-      return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
-          <circle cx="12" cy="12" r="4"/>
-        </svg>
-      )
-    case 'layout':
-      return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <path d="M3 15h18"/>
-        </svg>
-      )
     case 'refresh':
       return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -68,37 +54,29 @@ function MenuIcon({ name }: { name: string }) {
   }
 }
 
+
 export default function ConfigPanel() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const [activeMenu, setActiveMenu] = useState('theme')
   const [customColorInput, setCustomColorInput] = useState('')
-  const [originPoint, setOriginPoint] = useState({ x: 0, y: 0 })
+  
   const colorPickerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
+  
   const { config, updateThemeColor, updateFeature, resetConfig } = useConfig()
-
-  // 打开面板时记录按钮位置
-  const handleOpen = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect()
-      // 计算按钮中心点相对于视口的位置
-      setOriginPoint({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-      })
-    }
-    setIsOpen(true)
-  }
 
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
 
-  // 初始化自定义颜色输入框：如果不是预设颜色，显示当前颜色值
+  // 初始化自定义颜色输入框
   useEffect(() => {
     if (isPresetColor) {
       setCustomColorInput('')
     } else {
-      // 移除 # 号并转大写
       setCustomColorInput(config.theme.primaryColor.replace('#', '').toUpperCase())
     }
   }, [isPresetColor, config.theme.primaryColor])
@@ -112,6 +90,107 @@ export default function ConfigPanel() {
     }
     return () => document.body.classList.remove('config-open')
   }, [isOpen])
+
+  // 打开动画
+  const animateOpen = useCallback(() => {
+    if (!panelRef.current || !overlayRef.current || !buttonRef.current) return
+
+    const btn = buttonRef.current.getBoundingClientRect()
+    const panel = panelRef.current
+    
+    // 计算按钮中心相对于面板的位置
+    const panelRect = panel.getBoundingClientRect()
+    const originX = ((btn.left + btn.width / 2) - panelRect.left) / panelRect.width * 100
+    const originY = ((btn.top + btn.height / 2) - panelRect.top) / panelRect.height * 100
+    
+    // 设置 transform-origin 为按钮位置
+    gsap.set(panel, { 
+      transformOrigin: `${originX}% ${originY}%`
+    })
+
+    // 创建时间线
+    const tl = gsap.timeline()
+    
+    // 遮罩层淡入
+    tl.fromTo(overlayRef.current,
+      { opacity: 0 },
+      { 
+        opacity: 1, 
+        duration: 0.3,
+        ease: 'power2.out'
+      }
+    )
+    
+    // 面板从按钮位置展开 - macOS 风格
+    tl.fromTo(panel,
+      { 
+        scale: 0.1,
+        opacity: 0,
+        borderRadius: '50%',
+      },
+      { 
+        scale: 1,
+        opacity: 1,
+        borderRadius: '0px',
+        duration: 0.5,
+        ease: 'power3.out',
+      },
+      '-=0.25'
+    )
+
+    timelineRef.current = tl
+  }, [])
+
+  // 关闭动画
+  const animateClose = useCallback(() => {
+    if (!panelRef.current || !overlayRef.current) return
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setIsVisible(false)
+        setIsOpen(false)
+      }
+    })
+
+    // 面板缩回
+    tl.to(panelRef.current, {
+      scale: 0.1,
+      opacity: 0,
+      borderRadius: '50%',
+      duration: 0.35,
+      ease: 'power3.in',
+    })
+
+    // 遮罩层淡出
+    tl.to(overlayRef.current, {
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in'
+    }, '-=0.2')
+
+    timelineRef.current = tl
+  }, [])
+
+  // 打开面板
+  const handleOpen = () => {
+    setIsOpen(true)
+    setIsVisible(true)
+  }
+
+  // 当面板可见时执行打开动画
+  useEffect(() => {
+    if (isVisible && isOpen) {
+      // 等待 DOM 渲染
+      requestAnimationFrame(() => {
+        animateOpen()
+      })
+    }
+  }, [isVisible, isOpen, animateOpen])
+
+  // 关闭面板
+  const handleClose = () => {
+    animateClose()
+  }
 
   // 处理自定义颜色输入
   const handleCustomColorChange = (value: string) => {
@@ -130,6 +209,7 @@ export default function ConfigPanel() {
       setActiveMenu(id)
     }
   }
+
 
   // 渲染内容区域
   const renderContent = () => {
@@ -178,7 +258,6 @@ export default function ConfigPanel() {
       case 'features':
         return (
           <div className="config-sidebar-content">
-            {/* 布局卡片 */}
             <div className="config-sidebar-card">
               <div className="config-sidebar-section-title">布局</div>
               <div className="config-switches">
@@ -240,7 +319,6 @@ export default function ConfigPanel() {
               </div>
             </div>
 
-            {/* 开屏动画卡片 */}
             <div className="config-sidebar-card">
               <div className="config-sidebar-section-title">开屏动画</div>
               <div className="config-switches">
@@ -273,6 +351,7 @@ export default function ConfigPanel() {
     }
   }
 
+
   return (
     <>
       {/* 设置按钮 */}
@@ -289,93 +368,61 @@ export default function ConfigPanel() {
       </button>
 
       {/* 侧边设置面板 */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div 
-              className="config-overlay" 
-              onClick={() => setIsOpen(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-            />
-            
-            <motion.div 
-              className="config-sidebar-panel"
-              style={{
-                // 动态设置 transform-origin 为按钮位置
-                transformOrigin: `${originPoint.x}px ${originPoint.y}px`
-              }}
-              initial={{ 
-                opacity: 0, 
-                scale: 0.3,
-                borderRadius: '24px',
-              }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1,
-                borderRadius: '0px',
-              }}
-              exit={{ 
-                opacity: 0, 
-                scale: 0.3,
-                borderRadius: '24px',
-              }}
-              transition={{ 
-                type: 'spring',
-                stiffness: 400,
-                damping: 30,
-                mass: 0.8,
-                restDelta: 0.001,
-              }}
-            >
-              {/* 左侧菜单 */}
-              <div className="config-sidebar-left">
-                {/* 用户信息 */}
-                <div className="config-sidebar-user">
-                  <div className="user-avatar">
-                    {config.site.logo ? (
-                      <img src={config.site.logo} alt="avatar" />
-                    ) : (
-                      <img src="/logo.svg" alt="avatar" />
-                    )}
-                  </div>
-                  <span className="user-name">{config.site.title || 'Blog'}</span>
+      {isVisible && (
+        <>
+          <div 
+            ref={overlayRef}
+            className="config-overlay" 
+            onClick={handleClose}
+            style={{ opacity: 0 }}
+          />
+          
+          <div 
+            ref={panelRef}
+            className="config-sidebar-panel"
+            style={{ opacity: 0, scale: 0.1 }}
+          >
+            {/* 左侧菜单 */}
+            <div className="config-sidebar-left">
+              <div className="config-sidebar-user">
+                <div className="user-avatar">
+                  {config.site.logo ? (
+                    <img src={config.site.logo} alt="avatar" />
+                  ) : (
+                    <img src="/logo.svg" alt="avatar" />
+                  )}
                 </div>
-
-                {/* 菜单列表 */}
-                <nav className="config-sidebar-nav">
-                  {menuItems.map(item => (
-                    <button
-                      key={item.id}
-                      className={`config-sidebar-nav-item ${activeMenu === item.id ? 'active' : ''} ${item.id === 'reset' ? 'reset-item' : ''}`}
-                      onClick={() => handleMenuClick(item.id)}
-                    >
-                      <MenuIcon name={item.icon} />
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-                </nav>
+                <span className="user-name">{config.site.title || 'Blog'}</span>
               </div>
 
-              {/* 右侧区域 */}
-              <div className="config-sidebar-right">
-                {/* 顶部标题 */}
-                <div className="config-sidebar-header">
-                  <div className="header-title">{activeMenu === 'theme' ? '主题/壁纸' : '功能设置'}</div>
-                  <div className="header-subtitle">{activeMenu === 'theme' ? '深色模式、主题色' : '显示与动画设置'}</div>
-                </div>
-                
-                {/* 内容区 */}
-                <div className="config-sidebar-main">
-                  {renderContent()}
-                </div>
+              <nav className="config-sidebar-nav">
+                {menuItems.map(item => (
+                  <button
+                    key={item.id}
+                    className={`config-sidebar-nav-item ${activeMenu === item.id ? 'active' : ''} ${item.id === 'reset' ? 'reset-item' : ''}`}
+                    onClick={() => handleMenuClick(item.id)}
+                  >
+                    <MenuIcon name={item.icon} />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            {/* 右侧区域 */}
+            <div className="config-sidebar-right">
+              <div className="config-sidebar-header">
+                <div className="header-title">{activeMenu === 'theme' ? '主题/壁纸' : '功能设置'}</div>
+                <div className="header-subtitle">{activeMenu === 'theme' ? '深色模式、主题色' : '显示与动画设置'}</div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              
+              <div className="config-sidebar-main">
+                {renderContent()}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   )
 }
