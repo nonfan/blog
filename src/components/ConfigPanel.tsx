@@ -77,12 +77,15 @@ export default function ConfigPanel() {
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
 
-  // 当选择预设颜色时，清空输入框
+  // 初始化自定义颜色输入框：如果不是预设颜色，显示当前颜色值
   useEffect(() => {
     if (isPresetColor) {
       setCustomColorInput('')
+    } else {
+      // 移除 # 号并转大写
+      setCustomColorInput(config.theme.primaryColor.replace('#', '').toUpperCase())
     }
-  }, [isPresetColor])
+  }, [isPresetColor, config.theme.primaryColor])
 
   // 打开设置面板时添加 body 类
   useEffect(() => {
