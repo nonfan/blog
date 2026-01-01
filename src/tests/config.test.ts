@@ -7,7 +7,7 @@ import {
   normalizeBase,
   formatAssetPath,
   normalizeRepo,
-} from './index'
+} from '../config/index'
 
 // Mock localStorage
 const localStorageMock = (() => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import ConfigPanel from './ConfigPanel'
+import ConfigPanel from '../components/ConfigPanel'
 import { ConfigProvider } from '../config/ConfigContext'
 
 // Mock localStorage

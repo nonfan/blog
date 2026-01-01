@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
-import { ConfigProvider, useConfig } from './ConfigContext'
-import { defaultConfig } from './index'
+import { ConfigProvider, useConfig } from '../config/ConfigContext'
+import { defaultConfig } from '../config/index'
 
 // Mock localStorage
 const localStorageMock = {
