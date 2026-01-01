@@ -15,6 +15,18 @@ export interface BlogConfig {
     primaryColor: string // 主题色 hex
   }
 
+  // 阅读设置
+  reading: {
+    fontSize: 'small' | 'medium' | 'large' // 字体大小
+    fontFamily: 'sans' | 'serif' | 'mono' // 字体类型
+    codeTheme: 'default' | 'github' | 'dracula' | 'nord' // 代码块主题
+  }
+
+  // 列表布局
+  layout: {
+    postListView: 'card' | 'list' // 文章列表视图
+  }
+
   // 功能开关
   features: {
     showEditLink: boolean // 显示 GitHub 编辑链接
@@ -83,6 +95,14 @@ export const defaultConfig: BlogConfig = {
   },
   theme: {
     primaryColor: blogConfig.theme?.primaryColor || '#3b82f6',
+  },
+  reading: {
+    fontSize: 'medium',
+    fontFamily: 'sans',
+    codeTheme: 'default',
+  },
+  layout: {
+    postListView: 'card',
   },
   features: {
     showEditLink: blogConfig.features?.showEditLink ?? true,
@@ -160,6 +180,14 @@ export function loadConfig(): BlogConfig {
           ...defaultConfig.github,
           // repo 优先使用 localStorage，如果为空则使用默认配置
           repo: parsed.github?.repo || defaultConfig.github.repo,
+        },
+        reading: {
+          ...defaultConfig.reading,
+          ...parsed.reading,
+        },
+        layout: {
+          ...defaultConfig.layout,
+          ...parsed.layout,
         },
         features: {
           ...defaultConfig.features,

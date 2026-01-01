@@ -12,6 +12,8 @@ interface ConfigContextType {
   updateConfig: (updates: Partial<BlogConfig>) => void
   updateThemeColor: (color: string) => void
   updateFeature: (key: keyof BlogConfig['features'], value: boolean) => void
+  updateReading: <K extends keyof BlogConfig['reading']>(key: K, value: BlogConfig['reading'][K]) => void
+  updateLayout: <K extends keyof BlogConfig['layout']>(key: K, value: BlogConfig['layout'][K]) => void
   resetConfig: () => void
 }
 
@@ -20,6 +22,8 @@ const ConfigContext = createContext<ConfigContextType>({
   updateConfig: () => {},
   updateThemeColor: () => {},
   updateFeature: () => {},
+  updateReading: () => {},
+  updateLayout: () => {},
   resetConfig: () => {},
 })
 
@@ -36,6 +40,26 @@ function applyThemeColor(color: string) {
   root.style.setProperty('--color-primary-alpha-light', variants.alphaLight)
 }
 
+// 应用阅读设置到 CSS 变量
+function applyReadingSettings(reading: BlogConfig['reading']) {
+  const root = document.documentElement
+  
+  // 字体大小
+  const fontSizeMap = { small: '15px', medium: '17px', large: '19px' }
+  root.style.setProperty('--font-size-base', fontSizeMap[reading.fontSize])
+  
+  // 字体类型
+  const fontFamilyMap = {
+    sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    serif: 'Georgia, "Times New Roman", serif',
+    mono: '"SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+  }
+  root.style.setProperty('--font-family-content', fontFamilyMap[reading.fontFamily])
+  
+  // 代码主题 class
+  root.dataset.codeTheme = reading.codeTheme
+}
+
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<BlogConfig>(defaultConfig)
 
@@ -44,6 +68,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     const saved = loadConfig()
     setConfig(saved)
     applyThemeColor(saved.theme.primaryColor)
+    applyReadingSettings(saved.reading)
   }, [])
 
   const updateConfig = (updates: Partial<BlogConfig>) => {
@@ -77,15 +102,40 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     })
   }
 
+  const updateReading = <K extends keyof BlogConfig['reading']>(key: K, value: BlogConfig['reading'][K]) => {
+    setConfig(prev => {
+      const newReading = { ...prev.reading, [key]: value }
+      const newConfig = {
+        ...prev,
+        reading: newReading,
+      }
+      saveConfig(newConfig)
+      applyReadingSettings(newReading as BlogConfig['reading'])
+      return newConfig
+    })
+  }
+
+  const updateLayout = <K extends keyof BlogConfig['layout']>(key: K, value: BlogConfig['layout'][K]) => {
+    setConfig(prev => {
+      const newConfig = {
+        ...prev,
+        layout: { ...prev.layout, [key]: value },
+      }
+      saveConfig(newConfig)
+      return newConfig
+    })
+  }
+
   const resetConfig = () => {
     setConfig(defaultConfig)
     saveConfig(defaultConfig)
     applyThemeColor(defaultConfig.theme.primaryColor)
+    applyReadingSettings(defaultConfig.reading)
   }
 
   return (
     <ConfigContext.Provider
-      value={{ config, updateConfig, updateThemeColor, updateFeature, resetConfig }}
+      value={{ config, updateConfig, updateThemeColor, updateFeature, updateReading, updateLayout, resetConfig }}
     >
       {children}
     </ConfigContext.Provider>

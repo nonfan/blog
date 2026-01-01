@@ -19,8 +19,37 @@ const extendedColors = [
 // 菜单项配置
 const menuItems = [
   { id: 'theme', icon: 'palette', label: '主题/壁纸' },
+  { id: 'reading', icon: 'text', label: '阅读设置' },
   { id: 'features', icon: 'toggle', label: '功能设置' },
   { id: 'reset', icon: 'refresh', label: '重置设置' },
+]
+
+// 字体大小选项
+const fontSizeOptions: { value: 'small' | 'medium' | 'large'; label: string }[] = [
+  { value: 'small', label: '小' },
+  { value: 'medium', label: '中' },
+  { value: 'large', label: '大' },
+]
+
+// 字体类型选项
+const fontFamilyOptions: { value: 'sans' | 'serif' | 'mono'; label: string }[] = [
+  { value: 'sans', label: '无衬线' },
+  { value: 'serif', label: '衬线' },
+  { value: 'mono', label: '等宽' },
+]
+
+// 代码主题选项
+const codeThemeOptions: { value: 'default' | 'github' | 'dracula' | 'nord'; label: string }[] = [
+  { value: 'default', label: '默认' },
+  { value: 'github', label: 'GitHub' },
+  { value: 'dracula', label: 'Dracula' },
+  { value: 'nord', label: 'Nord' },
+]
+
+// 列表视图选项
+const listViewOptions: { value: 'card' | 'list'; label: string }[] = [
+  { value: 'card', label: '卡片' },
+  { value: 'list', label: '列表' },
 ]
 
 // 图标组件
@@ -33,6 +62,14 @@ function MenuIcon({ name }: { name: string }) {
           <circle cx="7.5" cy="11.5" r="1.5" fill="currentColor"/>
           <circle cx="12" cy="7.5" r="1.5" fill="currentColor"/>
           <circle cx="16.5" cy="11.5" r="1.5" fill="currentColor"/>
+        </svg>
+      )
+    case 'text':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M4 7V4h16v3"/>
+          <path d="M9 20h6"/>
+          <path d="M12 4v16"/>
         </svg>
       )
     case 'toggle':
@@ -67,7 +104,7 @@ export default function ConfigPanel() {
   const overlayRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   
-  const { config, updateThemeColor, updateFeature, resetConfig } = useConfig()
+  const { config, updateThemeColor, updateFeature, updateReading, updateLayout, resetConfig } = useConfig()
 
   // 检查是否是预设颜色
   const isPresetColor = extendedColors.some(c => c.value === config.theme.primaryColor)
@@ -238,6 +275,75 @@ export default function ConfigPanel() {
           </div>
         )
       
+      case 'reading':
+        return (
+          <div className="config-sidebar-content">
+            <div className="config-sidebar-card">
+              <div className="config-sidebar-section">
+                <div className="config-sidebar-section-title">字体大小</div>
+                <div className="config-option-group">
+                  {fontSizeOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`config-option-btn ${config.reading.fontSize === opt.value ? 'active' : ''}`}
+                      onClick={() => updateReading('fontSize', opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="config-sidebar-section">
+                <div className="config-sidebar-section-title">字体类型</div>
+                <div className="config-option-group">
+                  {fontFamilyOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`config-option-btn ${config.reading.fontFamily === opt.value ? 'active' : ''}`}
+                      onClick={() => updateReading('fontFamily', opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="config-sidebar-section">
+                <div className="config-sidebar-section-title">代码主题</div>
+                <div className="config-option-group">
+                  {codeThemeOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`config-option-btn ${config.reading.codeTheme === opt.value ? 'active' : ''}`}
+                      onClick={() => updateReading('codeTheme', opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="config-sidebar-card">
+              <div className="config-sidebar-section">
+                <div className="config-sidebar-section-title">文章列表</div>
+                <div className="config-option-group">
+                  {listViewOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`config-option-btn ${config.layout.postListView === opt.value ? 'active' : ''}`}
+                      onClick={() => updateLayout('postListView', opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      
       case 'features':
         return (
           <div className="config-sidebar-content">
@@ -395,8 +501,12 @@ export default function ConfigPanel() {
             {/* 右侧区域 */}
             <div className="config-sidebar-right">
               <div className="config-sidebar-header">
-                <div className="header-title">{activeMenu === 'theme' ? '主题/壁纸' : '功能设置'}</div>
-                <div className="header-subtitle">{activeMenu === 'theme' ? '深色模式、主题色' : '显示与动画设置'}</div>
+                <div className="header-title">
+                  {activeMenu === 'theme' ? '主题/壁纸' : activeMenu === 'reading' ? '阅读设置' : '功能设置'}
+                </div>
+                <div className="header-subtitle">
+                  {activeMenu === 'theme' ? '深色模式、主题色' : activeMenu === 'reading' ? '字体、代码主题、布局' : '显示与动画设置'}
+                </div>
               </div>
               
               <div className="config-sidebar-main">

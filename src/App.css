@@ -712,7 +712,8 @@ a.article-card {
 }
 
 .post-content {
-  font-size: 16px;
+  font-size: var(--font-size-base, 17px);
+  font-family: var(--font-family-content);
   line-height: 1.8;
   color: #333;
   overflow-wrap: break-word;

@@ -11,6 +11,10 @@
   --color-primary-dark: #2563eb;
   --color-primary-alpha: rgba(59, 130, 246, 0.4);
   --color-primary-alpha-light: rgba(96, 165, 250, 0.4);
+
+  /* 阅读设置 */
+  --font-size-base: 17px;
+  --font-family-content: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* View Transitions - 主题切换动画 */
